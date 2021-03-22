@@ -29,20 +29,17 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		setFocusTraversalKeysEnabled(false);
 		addMouseListener(this);
 		
-		try
-		{
+		try {
 			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
 		}
 		
 		
-		catch(Exception E)
-		{
+		catch(Exception E) {
 			System.out.println("Exception Error");
 		}
 	}
 	
-	public void paint(Graphics g)
-	{ 
+	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g.setColor(brown);
 		g.fillRect(0, 0, getWidth(), getHeight());
@@ -97,8 +94,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	}
 	
 
-	public void mouseClicked(MouseEvent e) 
-	{
+	public void mouseClicked(MouseEvent e) {
 		
 	
 	}
@@ -107,14 +103,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
@@ -123,45 +117,36 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		
 	}
 
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
-	
-
 }
 
