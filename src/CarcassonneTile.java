@@ -214,7 +214,8 @@ public class CarcassonneTile {
 
 	public String toString() {
 		Side[] rotated = this.getRotatedSides();
-		return String.format("      %s    %s    %s      \n" +
+		return String.format(
+				"      %s    %s    %s      \n" +
 				"%s                          %s\n" +
 				"%s                          %s\n" +
 				"%s                          %s\n" +
@@ -228,28 +229,28 @@ public class CarcassonneTile {
 
 	public static void main(String[] args) { // TEST
 		CarcassonneTile t1 = new CarcassonneTile(new Side[] {
-				new Side(TerrainType.City, TerrainType.City, TerrainType.City), //N
-				new Side(TerrainType.City, TerrainType.City, TerrainType.City), //W
+				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
+				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //W
 				new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm), //S
 				new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm)  //E
 		});
 		
 		CarcassonneTile t2 = new CarcassonneTile(new Side[] {
-				new Side(TerrainType.City, TerrainType.City, TerrainType.City), //N
+				new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
 		});
 		/*
 		// T1
-			  City    City    City
-		City                          Farm
+			  City    City    Farm
+		Farm                          Farm
 		City                          Road
 		City                          Farm
 			  Farm    Road    Farm
 
 		// T2
-			  City    City    City
+			  Farm    City    City
 		Farm                          Farm
 		Farm                          Farm
 		Farm                          Farm
@@ -258,6 +259,9 @@ public class CarcassonneTile {
 		// Test fitting each rotation, connecting from West of T1
 		// 90 Degrees should only work.
 		 */
+		System.out.println("t1: " + t1 + "\nt2: " + t2);
+
+
 		System.out.println("match D0  ? :" + t1.fit(t2, Orient.W));
 		t2.rotate(Rotation.D90);
 		System.out.println("match D90 ? :" + t1.fit(t2, Orient.W));
