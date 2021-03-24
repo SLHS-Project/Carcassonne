@@ -1,4 +1,9 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 /*
@@ -90,6 +95,15 @@ enum Rotation {
 	}
 	int iden() {
 		return this.id;
+	}
+	int degree() {
+		switch(this.iden()) {
+			case 0: return 0;
+			case 1: return 270;
+			case 2: return 180;
+			case 3: return 90;
+			default: return 0;
+		}
 	}
 }
 
@@ -190,6 +204,43 @@ public class CarcassonneTile {
 		this.sides = new Side[4];
 		this.sides = sides;
 	}
+
+	public CarcassonneTile(Side[] sides, BufferedImage img) {
+		this.image = img;
+		this.rotation = Rotation.D0;
+		this.sides = new Side[4];
+		this.sides = sides;
+	}
+
+	public BufferedImage getImage() {
+		return this.rotateImageByDegrees(this.image, this.rotation.degree());
+	}
+
+	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
+		double rads = Math.toRadians(angle);
+		double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
+		int w = img.getWidth();
+		int h = img.getHeight();
+		int newWidth = (int) Math.floor(w * cos + h * sin);
+		int newHeight = (int) Math.floor(h * cos + w * sin);
+
+		BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = rotated.createGraphics();
+		AffineTransform at = new AffineTransform();
+		at.translate((newWidth - w) / 2, (newHeight - h) / 2);
+
+		int x = w / 2;
+		int y = h / 2;
+
+		at.rotate(rads, x, y);
+		g2d.setTransform(at);
+		g2d.drawImage(img, 0, 0, null);
+		g2d.setColor(Color.RED);
+		g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
+		g2d.dispose();
+
+		return rotated;
+	}
 	
 	public Side[] getSides() {
 		return this.sides;
@@ -275,5 +326,46 @@ public class CarcassonneTile {
 		t2.rotate(Rotation.D180);
 		System.out.println(t2);
 
+
+		// image roation test
+		BufferedImage timg = null;
+		try {
+			timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/1.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		CarcassonneTile imgt = new CarcassonneTile(new Side[] {
+				new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+		}, timg);
+
+		imgt.rotate(Rotation.D90);
+
+		try {
+			File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\image90.png");
+			ImageIO.write(imgt.getImage(), "png", outputfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		imgt.rotate(Rotation.D180);
+
+		try {
+			File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\image180.png");
+			ImageIO.write(imgt.getImage(), "png", outputfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		imgt.rotate(Rotation.D270);
+
+		try {
+			File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\image270.png");
+			ImageIO.write(imgt.getImage(), "png", outputfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
