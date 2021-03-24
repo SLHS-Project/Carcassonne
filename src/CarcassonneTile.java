@@ -17,72 +17,6 @@ import java.util.Arrays;
  * 		ex) can this piece placed here?
  */
 
-/*
- * NW  N  NE
- * W   C   E
- * SW  S  SE
- *
- * More likely
- * EX) 1.png
- * Road: S, E
- * River: null
- * City: null
- * 
- * EX) 28.png
- * Road: null
- * River: null
- * City: N, E, S
- * 
- * EX) 40.png
- * Road: null
- * River: W, S
- * City: N, E
- * 
- * 
- * 
- * Maybe
- * EX) 1.png
- * G  G  G
- * G  R  R
- * G  R  G
- * 
- * EX) 28.png
- * G  C  C
- * G  C  C
- * G  C  C
- * 
- * EX) 40.png
- * C  C  C
- * R  R  C
- * G  R  C
- * 
- * Maybe 
- * EX) 1.png
- * N: F  F  F
- * W: F  F  F
- * S: F  R  F
- * E: F  R  F
- * 
- * EX) 28.png
- * N: C  C  C
- * W: F  F  F
- * S: C  C  C
- * E: C  C  C
- * 
- * EX) 40.png
- * N: C  C  C
- * W: F  R  F
- * S: F  R  F
- * E: C  C  C
- * 
- *    C  C  C
- * F  F  F  F  C
- * R  R  R  F  C
- * F  F  R  F  C
- *    F  R  F
- *    
- * 
- */
 enum Rotation {
 	D0(0),
 	D90(3),
@@ -126,38 +60,6 @@ enum Orient {
 	Orient opposite() {
 		return this.fromId((this.id + 2)%4);
 	}
-	/*
-		Visualization
-		  F  C  F            F  F  C
-		 C    N    F        F    W    F
-		 F  W   E  F -D90-> R  S   N  C
-		 F    S    C        F    E    F
-		   F  R  F            C  F  F
-
-		N -> E
-		W -> N
-		...
-
-		  F  C  F             F  R  F
-		 C    N    F         C    S    F
-		 F  W   E  F -D180-> F  E   W  F
-		 F    S    C         F    N    C
-		   F  R  F             F  C  F
-
-		N -> S
-		W -> E
-		...
-
-		  F  C  F             F  F  C
-		 C    N    F         F    E    F
-		 F  W   E  F -D270-> C  N   S  R
-		 F    S    C         F    W    F
-		   F  R  F             C  F  F
-
-		N -> W
-		W -> S
-		...
-	 */
 	Orient rotate(Rotation r) {
 		return this.fromId((this.id - r.iden() + 4) % 4);
 	}
