@@ -327,7 +327,7 @@ public class CarcassonneTile {
 		System.out.println(t2);
 
 
-		// image roation test
+		// image rotation test
 		BufferedImage timg = null;
 		try {
 			timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/1.png"));
