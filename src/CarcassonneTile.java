@@ -13,8 +13,8 @@ import java.util.Arrays;
  * 		road  connection
  * 		castle/farmland handling
  * -Meeples
- * -Connection validations
- * 		ex) can this piece placed here?
+ * -Connection validations   -- Done
+ * 		ex) can this piece placed here? -- Done
  */
 
 enum Rotation {
@@ -115,7 +115,15 @@ public class CarcassonneTile {
 	}
 
 	public BufferedImage getImage() {
-		return this.rotateImageByDegrees(this.image, this.rotation.degree());
+		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
+		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = r.createGraphics();
+		g2d.setPaint ( new Color (12, 12, 12) );
+		g2d.fillRect ( 0, 0, r.getWidth(), r.getHeight() );
+		g2d.drawImage(tileimg, 0, 0, null);
+		g2d.dispose();
+
+		return r;
 	}
 
 	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
@@ -137,8 +145,6 @@ public class CarcassonneTile {
 		at.rotate(rads, x, y);
 		g2d.setTransform(at);
 		g2d.drawImage(img, 0, 0, null);
-		g2d.setColor(Color.RED);
-		g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
 		g2d.dispose();
 
 		return rotated;
@@ -154,10 +160,10 @@ public class CarcassonneTile {
 
 	public Side[] getRotatedSides() {
 		return new Side[] {
-				this.sides[Orient.N.rotate(this.rotation).iden()],
-				this.sides[Orient.W.rotate(this.rotation).iden()],
-				this.sides[Orient.S.rotate(this.rotation).iden()],
-				this.sides[Orient.E.rotate(this.rotation).iden()],
+			this.sides[Orient.N.rotate(this.rotation).iden()],
+			this.sides[Orient.W.rotate(this.rotation).iden()],
+			this.sides[Orient.S.rotate(this.rotation).iden()],
+			this.sides[Orient.E.rotate(this.rotation).iden()],
 		};
 	}
 	
@@ -180,7 +186,8 @@ public class CarcassonneTile {
 				rotated[2].getSide()[0], rotated[2].getSide()[1], rotated[2].getSide()[2]);
 	}
 
-	public static void main(String[] args) { // TEST
+	public static void main(String[] args) {
+		// Following is a test data. These does not have effect to the main program
 		CarcassonneTile t1 = new CarcassonneTile(new Side[] {
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //W

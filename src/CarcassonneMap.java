@@ -2,8 +2,8 @@
  * TODO
  * -Calculate score for each player
  * 		-Take a look at "Foreseeable problems" section of Project Plan
- * -Holds array/list of tiles
- * -Make board image by compositing tiles
+ * -Holds array/list of tiles -- Done
+ * -Make board image by compositing tiles -- Done
  */
 
 /*
@@ -62,6 +62,45 @@ public class CarcassonneMap {
         return this.getConflicts(t, x, y).isEmpty();
     }
 
+    public boolean tryAddAt(CarcassonneTile t, int x, int y) {
+        if(!this.canAddAt(t, x, y)) return false;
+        this.map[x][y] = t;
+        return true;
+    }
+
+    class Coordinate {
+        int x, y;
+        public Coordinate(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        public int x() {
+            return this.x;
+        }
+        public int y() {
+            return this.y;
+        }
+    }
+
+    // Get all coordinates of all possible location for placing tile
+    public ArrayList<Coordinate> getPossibleLocations() {
+        ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
+
+        Boundary bb = this.getBoundary();
+
+        for(int x = bb.x1; x <= bb.x2; x++) {
+            for (int y = bb.y1; y <= bb.y2; y++) {
+                if(this.map[x][y] == null && (
+                        this.map[x-1][y] != null ||
+                        this.map[x+1][y] != null ||
+                        this.map[x][y-1] != null ||
+                        this.map[x][y+1] != null
+                        )) ret.add(new Coordinate(x, y));
+            }
+        }
+        return ret;
+    }
+
     public int calcScore() {
         // Calculate score
         return -1;
@@ -118,7 +157,7 @@ public class CarcassonneMap {
             if(!tile) break;
             ymax = i;
         }
-        return new Boundary(xmin, xmax, ymin, ymax);
+        return new Boundary(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
     }
     public BufferedImage render() {
         // get maximum/minimum x and y value
@@ -136,11 +175,18 @@ public class CarcassonneMap {
                 g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * 75, (y - bb.y1) * 75, null);
             }
         }
+        ArrayList<Coordinate> poss = this.getPossibleLocations();
+        for(Coordinate coord: poss) {
+           g2d.setPaint ( new Color ( 20,20,20 ) );
+           // TODO Replace this black rectangle with proper placeholder.
+           g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+        }
         g2d.dispose();
         return r;
     }
 
     public static void main(String[] args) {
+        // Following is a test data. These does not have effect to the main program
         CarcassonneMap map = new CarcassonneMap();
         System.out.println(map.getConflicts(new CarcassonneTile(new Side[] {
                 new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
@@ -149,6 +195,65 @@ public class CarcassonneMap {
                 new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm)  //E
         }), 44, 43));
         map.getBoundary();
+
+        BufferedImage timg = null;
+        try {
+            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/8.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map.tryAddAt(new CarcassonneTile(new Side[] {
+                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+        }, timg), 44, 44);
+
+        try {
+            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/4.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map.tryAddAt(new CarcassonneTile(new Side[] {
+                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+        }, timg), 42, 43);
+
+        try {
+            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/42.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map.tryAddAt(new CarcassonneTile(new Side[] {
+                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+        }, timg), 44, 43);
+        try {
+            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/2.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map.tryAddAt(new CarcassonneTile(new Side[] {
+                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+        }, timg), 42, 44);
+        try {
+            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/40.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map.tryAddAt(new CarcassonneTile(new Side[] {
+                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
+                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
+        }, timg), 42, 42);
 
         try {
             File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\map.png");
