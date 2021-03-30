@@ -125,8 +125,10 @@ public class CarcassonneMap {
         for(int i = 43; i >= 0; i--) {
             boolean tile = false;
             for(int j = 0; j < 85; j++)
-                if(this.map[i][j] != null)
+                if(this.map[i][j] != null) {
                     tile = true;
+                    break;
+                }
             if(!tile) break;
             xmin = i;
         }
@@ -135,8 +137,10 @@ public class CarcassonneMap {
         for(int i = 43; i < 85; i++) {
             boolean tile = false;
             for(int j = 0; j < 85; j++)
-                if(this.map[i][j] != null)
+                if (this.map[i][j] != null) {
                     tile = true;
+                    break;
+                }
             if(!tile) break;
             xmax = i;
         }
@@ -145,8 +149,10 @@ public class CarcassonneMap {
         for(int i = 43; i >= 0; i--) {
             boolean tile = false;
             for(int j = 0; j < 85; j++)
-                if(this.map[j][i] != null)
+                if(this.map[j][i] != null) {
                     tile = true;
+                    break;
+                }
             if(!tile) break;
             ymin = i;
         }
@@ -155,8 +161,10 @@ public class CarcassonneMap {
         for(int i = 43; i < 85; i++) {
             boolean tile = false;
             for(int j = 0; j < 85; j++)
-                if(this.map[j][i] != null)
+                if(this.map[j][i] != null) {
                     tile = true;
+                    break;
+                }
             if(!tile) break;
             ymax = i;
         }
