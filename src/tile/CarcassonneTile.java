@@ -1,3 +1,5 @@
+package tile;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -16,86 +18,6 @@ import java.util.Arrays;
  * -Connection validations   -- Done
  * 		ex) can this piece placed here? -- Done
  */
-
-enum Rotation {
-	D0(0),
-	D90(3),
-	D180(2),
-	D270(1);
-
-	private final int id;
-	Rotation(int id) {
-		this.id = id;
-	}
-	int iden() {
-		return this.id;
-	}
-	int degree() {
-		switch(this.iden()) {
-			case 0: return 0;
-			case 1: return 270;
-			case 2: return 180;
-			case 3: return 90;
-			default: return 0;
-		}
-	}
-}
-
-enum Orient {
-	N(0), W(1), S(2), E(3);
-
-	private final int id;
-	Orient(int id) {
-		this.id = id;
-	}
-	int iden() {
-		return this.id;
-	}
-	Orient fromId(int i) {
-		for(Orient o: Orient.values())
-			if(o.id == i)
-				return o;
-		return null;
-	}
-	Orient opposite() {
-		return this.fromId((this.id + 2)%4);
-	}
-	Orient rotate(Rotation r) {
-		return this.fromId((this.id - r.iden() + 4) % 4);
-	}
-};
-
-enum TerrainType {
-	Farm, River, City, Road
-};
-
-class Side {
-	TerrainType[] sidetypes;
-
-	Side(TerrainType l, TerrainType m, TerrainType r) {
-		sidetypes = new TerrainType[3];
-		sidetypes[0] = l;
-		sidetypes[1] = m;
-		sidetypes[2] = r;
-	}
-
-	public TerrainType[] getSide() {
-		return this.sidetypes;
-	}
-
-	public Side getReversedSide() {
-		return new Side(
-			this.sidetypes[2],
-			this.sidetypes[1],
-			this.sidetypes[0]
-		);
-	}
-
-	public boolean equals(Object obj) {
-		return Arrays.equals(this.sidetypes, ((Side) obj).getSide());
-	}
-}
-
 public class CarcassonneTile {
 	BufferedImage image;
 	Rotation rotation;
