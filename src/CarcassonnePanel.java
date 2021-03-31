@@ -21,9 +21,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private BufferedImage logo;
 	
 
-	public CarcassonnePanel() throws IOException
-	{
-		Scanner input = new Scanner(System.in);
+	public CarcassonnePanel() throws IOException {
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -55,7 +53,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
 		g.drawRect(0, 0, getWidth(), getHeight());
 		
-		
+		// board location: getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080
 		g.setColor(Color.black);
 		g.drawLine(getWidth()*1610/1920, getHeight()*20/1080, getWidth()*1610/1920, getHeight()-getHeight()*25/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*170/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080);
@@ -65,8 +63,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
-	//	g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
-		
+		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
+
+		g.setColor(Color.black);
+		// board area: g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
 		
 		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
 		g.setFont(f1);
