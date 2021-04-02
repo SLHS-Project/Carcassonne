@@ -1,3 +1,5 @@
+package tile;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -13,89 +15,9 @@ import java.util.Arrays;
  * 		road  connection
  * 		castle/farmland handling
  * -Meeples
- * -Connection validations
- * 		ex) can this piece placed here?
+ * -Connection validations   -- Done
+ * 		ex) can this piece placed here? -- Done
  */
-
-enum Rotation {
-	D0(0),
-	D90(3),
-	D180(2),
-	D270(1);
-
-	private final int id;
-	Rotation(int id) {
-		this.id = id;
-	}
-	int iden() {
-		return this.id;
-	}
-	int degree() {
-		switch(this.iden()) {
-			case 0: return 0;
-			case 1: return 270;
-			case 2: return 180;
-			case 3: return 90;
-			default: return 0;
-		}
-	}
-}
-
-enum Orient {
-	N(0), W(1), S(2), E(3);
-
-	private final int id;
-	Orient(int id) {
-		this.id = id;
-	}
-	int iden() {
-		return this.id;
-	}
-	Orient fromId(int i) {
-		for(Orient o: Orient.values())
-			if(o.id == i)
-				return o;
-		return null;
-	}
-	Orient opposite() {
-		return this.fromId((this.id + 2)%4);
-	}
-	Orient rotate(Rotation r) {
-		return this.fromId((this.id - r.iden() + 4) % 4);
-	}
-};
-
-enum TerrainType {
-	Farm, River, City, Road
-};
-
-class Side {
-	TerrainType[] sidetypes;
-
-	Side(TerrainType l, TerrainType m, TerrainType r) {
-		sidetypes = new TerrainType[3];
-		sidetypes[0] = l;
-		sidetypes[1] = m;
-		sidetypes[2] = r;
-	}
-
-	public TerrainType[] getSide() {
-		return this.sidetypes;
-	}
-
-	public Side getReversedSide() {
-		return new Side(
-			this.sidetypes[2],
-			this.sidetypes[1],
-			this.sidetypes[0]
-		);
-	}
-
-	public boolean equals(Object obj) {
-		return Arrays.equals(this.sidetypes, ((Side) obj).getSide());
-	}
-}
-
 public class CarcassonneTile {
 	BufferedImage image;
 	Rotation rotation;
@@ -115,7 +37,15 @@ public class CarcassonneTile {
 	}
 
 	public BufferedImage getImage() {
-		return this.rotateImageByDegrees(this.image, this.rotation.degree());
+		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
+		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = r.createGraphics();
+		g2d.setPaint ( new Color (12, 12, 12) );
+		g2d.fillRect ( 0, 0, r.getWidth(), r.getHeight() );
+		g2d.drawImage(tileimg, 0, 0, null);
+		g2d.dispose();
+
+		return r;
 	}
 
 	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
@@ -137,8 +67,6 @@ public class CarcassonneTile {
 		at.rotate(rads, x, y);
 		g2d.setTransform(at);
 		g2d.drawImage(img, 0, 0, null);
-		g2d.setColor(Color.RED);
-		g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
 		g2d.dispose();
 
 		return rotated;
@@ -154,10 +82,10 @@ public class CarcassonneTile {
 
 	public Side[] getRotatedSides() {
 		return new Side[] {
-				this.sides[Orient.N.rotate(this.rotation).iden()],
-				this.sides[Orient.W.rotate(this.rotation).iden()],
-				this.sides[Orient.S.rotate(this.rotation).iden()],
-				this.sides[Orient.E.rotate(this.rotation).iden()],
+			this.sides[Orient.N.rotate(this.rotation).iden()],
+			this.sides[Orient.W.rotate(this.rotation).iden()],
+			this.sides[Orient.S.rotate(this.rotation).iden()],
+			this.sides[Orient.E.rotate(this.rotation).iden()],
 		};
 	}
 	
@@ -180,7 +108,8 @@ public class CarcassonneTile {
 				rotated[2].getSide()[0], rotated[2].getSide()[1], rotated[2].getSide()[2]);
 	}
 
-	public static void main(String[] args) { // TEST
+	public static void main(String[] args) {
+		// Following is a test data. These does not have effect to the main program
 		CarcassonneTile t1 = new CarcassonneTile(new Side[] {
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //W
