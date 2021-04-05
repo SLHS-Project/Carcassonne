@@ -1,10 +1,11 @@
 import java.util.TreeMap;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 public class Map {
 
 	private TreeMap<Tile, Point> map;
-	private TreeMap<ArrayList<Integer>, Boolean> cities;
+	private TreeMap<ArrayList<Tile>, Boolean> cities;
 	private TreeMap<ArrayList<Integer>, String> farmlands;
 	
 	private Player red, yellow, blue, green;
@@ -54,11 +55,14 @@ public class Map {
 	private boolean completeC (Tile tile)
 	{
 		//change the value of the key in "cities" to true once completed
+		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
 		return true;
 	}
-	private boolean completeM (Tile tile)
+	//receive the just placed tile, return the center monastery tile if completed, else return null
+	private Tile completeM (Tile tile)
 	{
-		return true;
+		Tile MTile=null;
+		return MTile;
 	}
 	
 	//assume the just-placed tile completed a road, do score calculation
@@ -188,6 +192,43 @@ public class Map {
 			
 	}
 	
+	//assume the just-placed tile completed a city, do score calculation
+	public void cityScoring(Tile tile)
+	{
+		ArrayList<Tile> C2Score=new ArrayList<>();
+		for(ArrayList<Tile> a: cities.keySet()) {
+			if(a.contains(tile.getCode()))
+				C2Score=a;
+		}
+		
+		String owners=meepleCompare(C2Score, "C");
+		if (owners.length()<2)
+			return;
+		
+		int shieldNum=0;
+		for(Tile t: C2Score) {
+			if(t.hasShield())
+				shieldNum++;
+		}
+		int score=2*C2Score.size()+2*shieldNum;
+		
+		String[] p=owners.split(" ");
+		for(String s: p) {
+			callPlayer(s).addScore(score);
+		}
+	}
+
+	//assume the just-placed tile completed a monastery, do score calculation
+	//MTile is the tile with the monastery on it, this will be done via completeM
+	public void monasteryScoring(Tile MTile, Point loc)
+	{
+		String name="";
+		Meeple mp=MTile.getMeeple();
+		if(mp!=null)
+			name=mp.getColor();
+		callPlayer(name).addScore(9);
+	}
+	
 	private Tile findLoc(Point pt)
 	{
 		for(Tile t: map.keySet()) {
@@ -248,5 +289,6 @@ public class Map {
 		System.out.println("DID NOT FIND A PLAYER WITH NAME "+name);
 		return null;
 	}
+
 }
 
