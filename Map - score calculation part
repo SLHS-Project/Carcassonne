@@ -44,30 +44,10 @@ public class Map {
 		
 		return s;
 	}
-	private boolean completeRD (Tile tile, String direction) 
+	private boolean completeRD (Tile tile, String direction) //direction is which way the road extends on this tile
 	{
-		if(!direction.equals(""))
-		{
-			
-		}
-		return true;
-	}
-	private boolean completeC (Tile tile)
-	{
-		//change the value of the key in "cities" to true once completed
-		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
-		return true;
-	}
-	//receive the just placed tile, return the center monastery tile if completed, else return null
-	private Tile completeM (Tile tile)
-	{
-		Tile MTile=null;
-		return MTile;
-	}
-	
-	//assume the just-placed tile completed a road, do score calculation
-	public void roadScoring(Tile tile, Point loc)
-	{
+		completedTiles.clear();
+		
 		Side[] s = tile.getSides();
 		String temp="";
 		for(int i=0; i<s.length; i++)
@@ -86,60 +66,42 @@ public class Map {
 		}
 		//consists of the direction of the road: "N W"
 		String[] rd=temp.split(" ");
+		//if the road has two exists, then it did not end a road
+			if(rd.length==2)
+				return false;
+			
 		Point tempPt;
+		Point loc=map.get(tile);
 		String lineD="";
 		//if the ending tile ends the road with a city or monastery or etc.
-		if(rd.length==1) {
+		for(String str: rd) {
 			if(rd[0].equals("N")) {
 				tempPt=new Point((int)loc.getX(), (int)loc.getY()-tileSize);
-				lineD+="S";}
+				lineD="S";}
 			else if(rd[0].equals("W")) {
 				tempPt=new Point((int)loc.getX()-tileSize, (int)loc.getY());
-				lineD+="E";}
+				lineD="E";}
 			else if(rd[0].equals("S")) {
 				tempPt=new Point((int)loc.getX(), (int)loc.getY()+tileSize);
-				lineD+="W";}
+				lineD="W";}
 			else {
 				tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
-				lineD+="N";}
+				lineD="N";}
 			
-			rdScoring(findLoc(tempPt), lineD);
-		}
-		//if the road ends because of the crossroad
-		else {
-			//determine which side of the tile is road extended to complete
-			//rd length either 3 or 4
-			for(String str: rd)
-			{
-				if(completeRD(tile, str))
-				{
-					if(str.equals("N")) {
-						tempPt=new Point((int)loc.getX(), (int)loc.getY()-tileSize);
-						lineD+="S";}
-					else if(str.equals("W")) {
-						tempPt=new Point((int)loc.getX()-tileSize, (int)loc.getY());
-						lineD+="E";}
-					else if(str.equals("S")) {
-						tempPt=new Point((int)loc.getX(), (int)loc.getY()+tileSize);
-						lineD+="W";}
-					else {
-						tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
-						lineD+="N";}
-					rdScoring(findLoc(tempPt), lineD);
-					break;
-				}
+			Tile tile1=findLoc(tempPt);
+			if(tile1!=null) {
+				completedTiles.add(tile);
+				completeRd(findLoc(tempPt), lineD);
 			}
-			//NEED to check for instance if one crossroad tile completes 2 distinct roads ************************
+			if(completedTiles.size()<2)
+				return false;
+			return true;
 		}
-		
-		//tileCodes have all the tiles that the completed road is on
-		//check for meeples
-		String players=meepleCompare(completedTiles, "RD");
-		scoreCalc(players, 1, completedTiles.size());
+		System.out.println("Some error with completeRd function");
+		return false;
 	}
-	private void rdScoring(Tile tile, String lineD)
+	private void completeRd(Tile tile, String lineD)
 	{
-		
 		Side[] s = tile.getSides();
 		String temp="";
 		Point loc=map.get(tile);
@@ -188,8 +150,51 @@ public class Map {
 			lineD+="W";}
 			
 		Tile tile1=findLoc(tempPt);
-		rdScoring(tile1, lineD);
-			
+		//if no tile exist, the road is not complete, erase all items in the arraylist
+		if(tile1==null)
+			completedTiles.clear();
+		completeRd(tile1, lineD);
+	}
+	
+	private boolean completeC (Tile tile)
+	{
+		Side[] s = tile.getSides();
+		String temp="";
+		for(int i=0; i<s.length; i++)
+		{
+			String[] ts=s[i].getSide();
+			if(ts[1].equals("C")) {
+				if(i==0)
+					temp+="N ";
+				else if(i==1)
+					temp+="W ";
+				else if(i==2)
+					temp+="S ";
+				else
+					temp+="E";
+			}
+		}
+		//consists of the direction of the road: "N W"
+		String[] c=temp.split(" ");
+		
+		//change the value of the key in "cities" to true once completed
+		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
+		return true;
+	}
+	//receive the just placed tile, return the center monastery tile if completed, else return null
+	private Tile completeM (Tile tile)
+	{
+		Tile MTile=null;
+		return MTile;
+	}
+	
+	//assume the just-placed tile completed a road, do score calculation
+	public void roadScoring(Tile tile, Point loc)
+	{
+		//tileCodes have all the tiles that the completed road is on
+		//check for meeples
+		String players=meepleCompare(completedTiles, "RD");
+		scoreCalc(players, 1, completedTiles.size());
 	}
 	
 	//assume the just-placed tile completed a city, do score calculation
@@ -291,4 +296,3 @@ public class Map {
 	}
 
 }
-
