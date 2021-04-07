@@ -3,10 +3,7 @@ import static tile.Orient.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,30 +19,48 @@ public class TileParser {
             case "W": return W;
             case "S": return S;
             case "E": return E;
-            default: return N;
+            default: return null;
         }
     }
     private Orient[] getOrient(String l) {
-        ArrayList<Orient> ret = new ArrayList<Orient>();
-        Pattern p = Pattern.compile("\\[.*?]");
-        Matcher m = p.matcher(l);
-        while (m.find()) {
-            String o = m.group();
-            System.out.println(o);
-            if (!ret.contains(this.orientFromString(o)))
-                ret.add(this.orientFromString(o));
-        }
+        List<Orient> ret = new LinkedList<Orient>();
+        String[] all = l.split("");
+        Orient o;
+        for(String e: all)
+            if ((o = orientFromString(e)) != null)
+                ret.add(o);
 
         return ret.toArray(new Orient[ret.size()]);
+    }
+    private Side[] makeSides(HashMap<String, Orient[]> map) {
+        if(map.get("river") == null || map.get("city") == null || map.get("road") == null) {
+            System.out.println("incomplete map");
+            return null; // incomplete
+        }
+        
+        return null;
     }
     private CarcassonneTile parseLine(String line) {
         Pattern p = Pattern.compile("\\[.*?]");
         Matcher m = p.matcher(line);
-        String[] splited = line.split(":\\s\\W*\\]");
-        String river = splited[0];
-        while(m.find)System.out.println();
-        System.out.println(splited);
-        System.out.println(this.getOrient(river)[0]);
+        HashMap<String, Orient[]> orients = new HashMap<>();
+        boolean mono;
+        while(m.find()){
+            String parts = m.group();
+            parts = parts.substring(1, parts.length()-1);
+            String cate = parts.split(":")[0];
+            parts = parts.split(":")[1].replace(' ', '\0');
+
+            if (cate.equals("monastery")) {
+            } else {
+                Orient[] os = getOrient(parts);
+                orients.put(cate, os);
+
+                System.out.print(cate + " " + parts);
+                for(Orient o: os) System.out.print(o);
+                System.out.println();
+            }
+        }
         return null;
     }
     public HashMap<Integer, CarcassonneTile> loadTiles(String file) {
