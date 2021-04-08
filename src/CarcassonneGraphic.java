@@ -16,7 +16,7 @@ public class CarcassonneGraphic extends JFrame{
 		super(frameName);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(WIDTH, HEIGHT);
-		add(new CarcassonnePanel());
+		add(new ScoreboardPanel());
 		setVisible(true);
 		
 	}

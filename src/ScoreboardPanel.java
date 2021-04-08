@@ -13,15 +13,15 @@ import java.util.concurrent.Executor;
 import java.util.*;
 import java.util.Queue;
 
-public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
+public class ScoreboardPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
 	
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
 	private Color grey = new Color(206, 206, 206);
-	private BufferedImage logo;
+	private BufferedImage logo, scoreboard;
 	
 
-	public CarcassonnePanel() throws IOException
+	public ScoreboardPanel() throws IOException
 	{
 		Scanner input = new Scanner(System.in);
 		addKeyListener(this);
@@ -31,7 +31,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		
 		try
 		{
-			logo = ImageIO.read(BeginningPanel.class.getResource("/Images/logo.jpg"));
+			logo = ImageIO.read(ScoreboardPanel.class.getResource("/Images/logo.jpg"));
+			scoreboard = ImageIO.read(ScoreboardPanel.class.getResource("/Images/scoreboard.jfif"));
 		}
 		
 		
@@ -96,6 +97,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.setFont(f4);
 		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
 		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
+		
+		g.drawImage(scoreboard, getWidth()*200/1920, getHeight()*200/1080, getWidth()*1300/1920, getHeight()*800/1080, null);
 	}
 	
 
