@@ -22,4 +22,13 @@ public enum Orient {
     public Orient rotate(Rotation r) {
         return this.fromId((this.id - r.iden() + 4) % 4);
     }
+    public String toString() {
+        switch (this.id) {
+            case 0: return "N";
+            case 1: return "W";
+            case 2: return "S";
+            case 3: return "E";
+            default: return "no";
+        }
+    }
 };

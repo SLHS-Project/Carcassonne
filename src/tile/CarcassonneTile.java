@@ -20,6 +20,7 @@ import java.util.Arrays;
  * 		ex) can this piece placed here? -- Done
  */
 public class CarcassonneTile {
+	boolean monastery;
 	BufferedImage image;
 	Rotation rotation;
 	Side[] sides;
@@ -33,6 +34,14 @@ public class CarcassonneTile {
 	}
 
 	public CarcassonneTile(Side[] sides, BufferedImage img) {
+		this.image = img;
+		this.rotation = Rotation.D0;
+		this.sides = new Side[4];
+		this.sides = sides;
+	}
+
+	public CarcassonneTile(boolean monastery, Side[] sides, BufferedImage img) {
+	    this.monastery = monastery;
 		this.image = img;
 		this.rotation = Rotation.D0;
 		this.sides = new Side[4];
