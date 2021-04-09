@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -22,6 +23,8 @@ public class CarcassonneTile {
 	BufferedImage image;
 	Rotation rotation;
 	Side[] sides;
+	private int code;
+	private Meeple meeple;
 
 	public CarcassonneTile(Side[] sides) {
 		this.rotation = Rotation.D0;
@@ -92,6 +95,48 @@ public class CarcassonneTile {
 	public boolean fit(CarcassonneTile t, Orient o) {
 		return this.sides[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
 	}
+	
+	public boolean isCR()
+	{
+		return true;
+	}
+	public boolean isRiver()
+	{
+		return true;
+	}
+	public boolean hasShield()
+	{
+		ArrayList<Integer> i= new ArrayList<>(Arrays.asList(6, 12, 23, 31, 34, 35, 46, 65, 77, 79));
+		if(i.contains(code))
+			return true;
+		return false;
+	}
+	
+	public String getTypes()
+	{
+		return "";
+	}
+	
+	public int checkRdDirections()
+	{
+		int num=0;
+		for(Side s: sides)
+		{
+			TerrainType[] t=s.getSide();
+			if(t[1].Road!=null) //check if the road exist on this side of the tile
+				num++;
+		}
+		return num;
+	}
+	public Meeple getMeeple()
+	{
+		return meeple;
+	}
+	
+	public int getCode()
+	{
+		return code;
+	}
 
 	public String toString() {
 		Side[] rotated = this.getRotatedSides();
@@ -111,6 +156,7 @@ public class CarcassonneTile {
 	public static void main(String[] args) {
 		// Following is a test data. These does not have effect to the main program
 		CarcassonneTile t1 = new CarcassonneTile(new Side[] {
+				
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
 				new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //W
 				new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm), //S
