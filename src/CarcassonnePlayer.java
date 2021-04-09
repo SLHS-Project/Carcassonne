@@ -5,5 +5,16 @@
  * -Serves as identification for Game class
  */
 public class CarcassonnePlayer {
+	private int score;
+	
+		public CarcassonnePlayer()
+		{
+			score=0;
+		}
+	
+		public void addScore(int num)
+		{
+			score+=num;
+		}
 
 }
