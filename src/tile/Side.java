@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public class Side {
     TerrainType[] sidetypes;
+    String[] side;
 
     public Side(TerrainType l, TerrainType m, TerrainType r) {
         sidetypes = new TerrainType[3];
@@ -14,6 +15,11 @@ public class Side {
 
     public TerrainType[] getSide() {
         return this.sidetypes;
+    }
+    
+    public String[] getSideStr()
+    {
+    		return side;
     }
 
     public Side getReversedSide() {
