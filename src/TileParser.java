@@ -37,7 +37,7 @@ public class TileParser {
             System.out.println("incomplete map");
             return null; // incomplete
         }
-        
+
         return null;
     }
     private CarcassonneTile parseLine(String line) {
