@@ -26,6 +26,7 @@ public class CarcassonneTile {
 	Side[] sides;
 	private int code;
 	private Meeple meeple;
+	private boolean shield;
 
 	public CarcassonneTile(Side[] sides) {
 		this.rotation = Rotation.D0;
@@ -34,6 +35,8 @@ public class CarcassonneTile {
 	}
 
 	public CarcassonneTile(Side[] sides, BufferedImage img) {
+		this.shield = false;
+		this.monastery = false;
 		this.image = img;
 		this.rotation = Rotation.D0;
 		this.sides = new Side[4];
@@ -41,7 +44,17 @@ public class CarcassonneTile {
 	}
 
 	public CarcassonneTile(boolean monastery, Side[] sides, BufferedImage img) {
+		this.shield = false;
 	    this.monastery = monastery;
+		this.image = img;
+		this.rotation = Rotation.D0;
+		this.sides = new Side[4];
+		this.sides = sides;
+	}
+
+	public CarcassonneTile(boolean monastery, boolean shield, Side[] sides, BufferedImage img) {
+		this.shield = shield;
+		this.monastery = monastery;
 		this.image = img;
 		this.rotation = Rotation.D0;
 		this.sides = new Side[4];

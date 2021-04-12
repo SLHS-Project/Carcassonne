@@ -20,11 +20,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 public class CarcassonneMap {
     CarcassonneTile[][] map;
+    public HashMap<Integer, CarcassonneTile> tile_ref;
     
     private TreeMap<CarcassonneTile, Point> Map;
   	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
@@ -47,24 +50,14 @@ public class CarcassonneMap {
   		farmlands=new TreeMap<>();
   		
   		tileSize=HEIGHT/4;
-  		completedTiles=new ArrayList<>(); 
+  		completedTiles=new ArrayList<>();
 
+		TileParser p = new TileParser();
+  		this.tile_ref = p.loadTiles("src/res/tileImg/tile_data.txt");
 
-        // 0, 0 is left, top
+		// 0, 0 is left, top
         this.map = new CarcassonneTile[85][85];
-        // TODO change this, this mess below is simple start tile for test purposes.
-        BufferedImage timg = null;
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/37.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.map[43][43] = new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.River, TerrainType.Farm)  //E
-        }, timg);
+        this.tryAddAt(tile_ref.get(37), 43, 43);
     }
 
 
@@ -134,7 +127,7 @@ public class CarcassonneMap {
 
     // Rendering
     class Boundary {
-        int x1, x2, y1, y2;
+        public int x1, x2, y1, y2;
         public Boundary(int x1, int x2, int y1, int y2) {
             this.x1 = x1;
             this.x2 = x2;
@@ -193,7 +186,7 @@ public class CarcassonneMap {
         }
         return new Boundary(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
     }
-    public BufferedImage render() {
+    public BufferedImage __render() {
         // get maximum/minimum x and y value
         Boundary bb = this.getBoundary();
         int width = bb.x2 - bb.x1 + 1;
@@ -218,6 +211,49 @@ public class CarcassonneMap {
         g2d.dispose();
         return r;
     }
+
+    class GameBoardGraphics {
+        BufferedImage img;
+
+        public GameBoardGraphics(BufferedImage img) {
+            this.img = img;
+		}
+
+		public BufferedImage getImg() {
+        	return img;
+		}
+	}
+
+    public GameBoardGraphics render(int h, int w) {
+		Boundary bb = this.getBoundary();
+		int width = bb.x2 - bb.x1 + 1;
+		int height = bb.y2 - bb.y1 + 1;
+		BufferedImage mapimg = new BufferedImage(width * 75, height * 75, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = mapimg.createGraphics();
+		for(int x = bb.x1; x <= bb.x2; x++) {
+			for (int y = bb.y1; y <= bb.y2; y++) {
+				if(this.map[x][y] == null) continue;
+				g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * 75, (y - bb.y1) * 75, null);
+			}
+		}
+		ArrayList<Boundary> imgBoundPoss = new ArrayList<>();
+		ArrayList<Coordinate> poss = this.getPossibleLocations();
+		for(Coordinate coord: poss) {
+			g2d.setPaint ( new Color ( 20,20,20 ) );
+			g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+			imgBoundPoss.add(new Boundary((coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, (coord.x() - bb.x1) * 75 + 75, (coord.y() - bb.y1) * 75+75));
+		}
+		g2d.dispose();
+		for(Boundary b: imgBoundPoss) {
+		//	b.
+		}
+
+		BufferedImage r = new BufferedImage(h, w, BufferedImage.TYPE_INT_ARGB);
+		g2d = r.createGraphics();
+		g2d.drawImage(mapimg, h/2 - mapimg.getWidth()/2, w/2 - mapimg.getHeight()/2, null);
+		g2d.dispose();
+        return new GameBoardGraphics(r);
+	}
 
   //checks if any feature is completed
   	public String complete (CarcassonneTile tile)
@@ -487,81 +523,22 @@ public class CarcassonneMap {
     
     public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
-    		CarcassonnePlayer r=new CarcassonnePlayer();
-    		CarcassonnePlayer y=new CarcassonnePlayer();
-    		CarcassonnePlayer b=new CarcassonnePlayer();
-    		CarcassonnePlayer g=new CarcassonnePlayer();
+		CarcassonnePlayer r=new CarcassonnePlayer();
+		CarcassonnePlayer y=new CarcassonnePlayer();
+		CarcassonnePlayer b=new CarcassonnePlayer();
+		CarcassonnePlayer g=new CarcassonnePlayer();
+
         CarcassonneMap map = new CarcassonneMap(r, y, b, g);
-        System.out.println(map.getConflicts(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.City, TerrainType.City, TerrainType.Farm), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Road, TerrainType.Farm)  //E
-        }), 44, 43));
-        map.getBoundary();
 
-        BufferedImage timg = null;
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/8.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        map.tryAddAt(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
-        }, timg), 44, 44);
+		TileParser p = new TileParser();
+		HashMap<Integer, CarcassonneTile> t = p.loadTiles("src/res/tileImg/tile_data.txt");
 
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/4.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        map.tryAddAt(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
-        }, timg), 42, 43);
+		System.out.println(map.tryAddAt(t.get(38), 44, 43));
+		System.out.println(map.tryAddAt(t.get(43), 44, 44));
 
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/42.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        map.tryAddAt(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
-        }, timg), 44, 43);
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/2.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        map.tryAddAt(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
-        }, timg), 42, 44);
-        try {
-            timg = ImageIO.read(CarcassonneTile.class.getResource("/res/tileImg/40.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        map.tryAddAt(new CarcassonneTile(new Side[] {
-                new Side(TerrainType.Farm, TerrainType.City, TerrainType.City), //N
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //W
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
-                new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
-        }, timg), 42, 42);
-
-        try {
+		try {
             File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\map.png");
-            ImageIO.write(map.render(), "png", outputfile);
+            ImageIO.write(map.__render(), "png", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
         }

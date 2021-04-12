@@ -56,12 +56,10 @@ public class TileParser {
         else return null; // impossible
     }
     private Side[] makeSides(HashMap<Orient, TerrainType> map) {
-        for(Orient o: map.keySet()) System.out.println(" +++ " + map.get(o) + " " + o);
         if(map.get(N) == null) map.put(N, Farm);
         if(map.get(W) == null) map.put(W, Farm);
         if(map.get(S) == null) map.put(S, Farm);
         if(map.get(E) == null) map.put(E, Farm);
-        for(Orient o: map.keySet()) System.out.println(map.get(o) + " " + o);
 
         if(map.get(N) == null
                 || map.get(W) == null
@@ -84,6 +82,7 @@ public class TileParser {
         Matcher m = p.matcher(line);
         HashMap<Orient, TerrainType> orients = new HashMap<>();
         boolean mono = false;
+        boolean shield = false;
         while(m.find()){
             String parts = m.group();
             parts = parts.substring(1, parts.length()-1);
@@ -95,13 +94,10 @@ public class TileParser {
             } else {
                 Orient[] os = getOrient(parts);
                 for(Orient o: os) {
-                    System.out.println("--" + o);
                     orients.put(o, typeFromString(cate));
                 }
-
-                System.out.print(cate + " " + parts);
-                for(Orient o: os) System.out.print(o);
-                System.out.println();
+                if(cate.equals("city") && parts.contains("*"))
+                    shield = true;
             }
         }
 
@@ -113,8 +109,7 @@ public class TileParser {
             e.printStackTrace();
         }
 
-        System.out.println(mono);
-        return new CarcassonneTile(mono, this.makeSides(orients), timg);
+        return new CarcassonneTile(mono, shield, this.makeSides(orients), timg);
     }
     public HashMap<Integer, CarcassonneTile> loadTiles(String file) {
         HashMap<Integer, CarcassonneTile> ret = new HashMap<Integer, CarcassonneTile>();
@@ -136,5 +131,7 @@ public class TileParser {
         System.out.println(t.size());
         System.out.println(t.get(39));
         System.out.println(t.get(53));
+
+
     }
 }
