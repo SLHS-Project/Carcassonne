@@ -484,7 +484,7 @@ public class CarcassonneMap {
   	}
 
     
-    
+    /*
     public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
     		CarcassonnePlayer r=new CarcassonnePlayer();
@@ -560,10 +560,10 @@ public class CarcassonneMap {
         }, timg), 42, 42);
 
         try {
-            File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\map.png");
+            File outputfile = new File("C:\\Users\\k1401509\\Desktop\\a\\map.png");
             ImageIO.write(map.render(), "png", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
