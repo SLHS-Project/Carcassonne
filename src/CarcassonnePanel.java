@@ -20,6 +20,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private Color grey = new Color(206, 206, 206);
 	private BufferedImage logo;
 	
+	public BufferedImage[] riverTiles;
+	public BufferedImage[] carcassonneTiles;
+	
+	private Resources res=new Resources();
 
 	public CarcassonnePanel() throws IOException {
 		addKeyListener(this);
@@ -28,13 +32,18 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		addMouseListener(this);
 		
 		try {
-			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
+			logo = ImageIO.read(CarcassonnePanel.class.getResource("/res.tileImg/logo.jfif"));
 		}
 		
 		
 		catch(Exception E) {
 			System.out.println("Exception Error");
 		}
+		
+		riverTiles=res.getRiverTiles();
+		carcassonneTiles=res.getTiles();
+		
+		System.out.println(riverTiles.length);
 	}
 	
 	public void paint(Graphics g) {
@@ -91,6 +100,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.setFont(f4);
 		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
 		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
+		
+		if(riverTiles.length!=0)
+			g.drawImage(riverTiles[0], getWidth()*1650/1920, getHeight()*700/1080, null);
 	}
 	
 
