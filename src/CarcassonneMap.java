@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 public class CarcassonneMap {
     CarcassonneTile[][] map;
-    public HashMap<Integer, CarcassonneTile> tile_ref;
+    public HashMap<Integer, CarcassonneTile> tile_ref; //river tiles are 37, 38, 39, 40, 49, 50, 51, 52, 61, 73, 74, 75
     
     private TreeMap<CarcassonneTile, Point> Map;
   	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
