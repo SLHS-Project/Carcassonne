@@ -20,7 +20,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -206,8 +205,17 @@ public class CarcassonneMap {
         for(Coordinate coord: poss) {
            g2d.setPaint ( new Color ( 20,20,20 ) );
            // TODO Replace this black rectangle with proper placeholder.
-           g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
-        }
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(CarcassonneTile.class.getResource("/res/placeholder.png"));
+			} catch (IOException e) {
+			    System.out.println(e.getMessage());
+			}
+			if(img == null)
+				g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+			else
+				g2d.drawImage(img, (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75, null);
+		}
         g2d.dispose();
         return r;
     }
