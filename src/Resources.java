@@ -1,5 +1,11 @@
+import tile.CarcassonneTile;
+import tile.Orient;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.TimeoutException;
 
 /*
  * TODO
@@ -7,57 +13,38 @@ import java.awt.image.BufferedImage;
  * 		*Use static variable for easy access
  */
 public class Resources {
+    HashMap<Integer, CarcassonneTile> tiles;
 
+    public Resources(String tilelist) {
+        TileParser parser = new TileParser();
+        this.tiles = parser.loadTiles(tilelist);
+    }
+
+<<<<<<< HEAD
 		public Resources()
 		{
 			
 		}
-		public BufferedImage[] getRiverTiles()
-		{
-				BufferedImage[] imgs=new BufferedImage[12];
-				try {
-						BufferedImage img = ImageIO.read(Resources.class.getResource("/res.tileImg/37.PNG"));
-						imgs[0]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/38.PNG"));
-						imgs[1]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/39.PNG"));
-						imgs[2]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/40.PNG"));
-						imgs[3]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/49.PNG"));
-						imgs[4]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/50.PNG"));
-						imgs[5]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/51.PNG"));
-						imgs[6]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/52.PNG"));
-						imgs[7]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/61.PNG"));
-						imgs[8]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/73.PNG"));
-						imgs[9]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/74.PNG"));
-						imgs[10]=img;
-						
-						img = ImageIO.read(Resources.class.getResource("/res.tileImg/75.PNG"));
-						imgs[11]=img;
-						
-				}
-				catch(Exception E)
-				{
-						System.out.println("Exception error for riverTiles in class Resources");
-				}
-				
-				return imgs;
-		}
+		
+    public CarcassonneTile[] getRiverTiles() {
+        ArrayList<CarcassonneTile> ret = new ArrayList<>();
+        ret.add(this.tiles.get(37));
+        ret.add(this.tiles.get(38));
+        ret.add(this.tiles.get(40));
+        ret.add(this.tiles.get(49));
+        ret.add(this.tiles.get(50));
+        ret.add(this.tiles.get(51));
+        ret.add(this.tiles.get(52));
+        ret.add(this.tiles.get(61));
+        ret.add(this.tiles.get(73));
+        ret.add(this.tiles.get(74));
+        ret.add(this.tiles.get(75));
+        return ret.toArray(new CarcassonneTile[ret.size()]);
+    }
+
+    //excluding river tiles
+    public HashMap<Integer, CarcassonneTile> getTiles() {
+        return this.tiles;
+    }
+>>>>>>> fcb6de870650cfdf06ae592d7ebc5526179a7074
 }
