@@ -27,6 +27,7 @@ import java.util.TreeMap;
 
 public class CarcassonneMap {
     CarcassonneTile[][] map;
+    Resources resources;
     public HashMap<Integer, CarcassonneTile> tile_ref;
     
     private TreeMap<CarcassonneTile, Point> Map;
@@ -52,8 +53,10 @@ public class CarcassonneMap {
   		tileSize=HEIGHT/4;
   		completedTiles=new ArrayList<>();
 
+
 		TileParser p = new TileParser();
   		this.tile_ref = p.loadTiles("src/res/tileImg/tile_data.txt");
+  		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
 		// 0, 0 is left, top
         this.map = new CarcassonneTile[85][85];
