@@ -60,22 +60,4 @@ public class Resources {
 				
 				return imgs;
 		}
-
-		//excluding river tiles
-		public BufferedImage[] getTiles()
-		{
-				BufferedImage[] imgs=new BufferedImage[72];
-				for(int i=1; i<=84; i++)
-				{
-						if(i!=37 && i!=38 && i!=39 && i!=40 && i!=49 && i!=50 && i!=51 && i!=52 && i!=61 && i!=73 && i!=74 && i!=75 ) {
-							try {
-									BufferedImage img = ImageIO.read(Resources.class.getResource("i.PNG"));
-									imgs[i]=img;
-							}
-							catch(Exception E)
-							{}
-						}
-				}
-				return imgs;
-		}
 }
