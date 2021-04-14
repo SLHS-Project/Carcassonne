@@ -1,3 +1,6 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
 /*
  * TODO
  * -Holdes defined tiles for each id
