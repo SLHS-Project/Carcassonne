@@ -131,7 +131,5 @@ public class TileParser {
         System.out.println(t.size());
         System.out.println(t.get(39));
         System.out.println(t.get(53));
-
-
     }
 }

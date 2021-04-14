@@ -14,7 +14,6 @@ public class Resources {
 		{
 			
 		}
-		
 		public BufferedImage[] getRiverTiles()
 		{
 				BufferedImage[] imgs=new BufferedImage[12];
