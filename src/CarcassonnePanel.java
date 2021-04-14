@@ -23,15 +23,15 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private CarcassonneMap map;
 
 	public CarcassonnePanel() throws IOException {
-		r=new CarcassonnePlayer();
-		y=new CarcassonnePlayer();
-		b=new CarcassonnePlayer();
-		g=new CarcassonnePlayer();
+		r=new CarcassonnePlayer("red");
+		y=new CarcassonnePlayer("yellow");
+		b=new CarcassonnePlayer("blue");
+		g=new CarcassonnePlayer("green");
 
 		map = new CarcassonneMap(r, y, b, g);
-		System.out.println(map.tryAddAt(map.tile_ref.get(39), 44, 43));
-		System.out.println(map.tryAddAt(map.tile_ref.get(31), 44, 44));
-		System.out.println(map.tryAddAt(map.tile_ref.get(30), 43, 44));
+		System.out.println(map.tryAddAt(map.resources.getTiles().get(39), 44, 43));
+		System.out.println(map.tryAddAt(map.resources.getTiles().get(31), 44, 44));
+		System.out.println(map.tryAddAt(map.resources.getTiles().get(30), 43, 44));
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
