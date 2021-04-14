@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 public class CarcassonneMap {
-    CarcassonneTile[][] map;
-    Resources resources;
+    public Resources resources;
 
-    private TreeMap<CarcassonneTile, Point> Map;
+	private CarcassonneTile[][] map;
+	private TreeMap<CarcassonneTile, Point> Map;
   	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
   	private TreeMap<ArrayList<Integer>, String> farmlands;
   	private ArrayList<CarcassonneTile> completedTiles; //temporary storing
