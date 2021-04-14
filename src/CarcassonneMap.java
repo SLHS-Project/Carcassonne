@@ -51,7 +51,6 @@ public class CarcassonneMap {
   		tileSize=HEIGHT/4;
   		completedTiles=new ArrayList<>();
 
-
   		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
 		// 0, 0 is left, top
@@ -202,19 +201,10 @@ public class CarcassonneMap {
             }
         }
         ArrayList<Coordinate> poss = this.getPossibleLocations();
+
         for(Coordinate coord: poss) {
            g2d.setPaint ( new Color ( 20,20,20 ) );
-           // TODO Replace this black rectangle with proper placeholder.
-			BufferedImage img = null;
-			try {
-				img = ImageIO.read(CarcassonneTile.class.getResource("/res/placeholder.png"));
-			} catch (IOException e) {
-			    System.out.println(e.getMessage());
-			}
-			if(img == null)
-				g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
-			else
-				g2d.drawImage(img, (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75, null);
+
 		}
         g2d.dispose();
         return r;
@@ -248,7 +238,10 @@ public class CarcassonneMap {
 		ArrayList<Coordinate> poss = this.getPossibleLocations();
 		for(Coordinate coord: poss) {
 			g2d.setPaint ( new Color ( 20,20,20 ) );
-			g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+			if(resources.placeholder == null)
+				g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+			else
+				g2d.drawImage(resources.placeholder, (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75, null);
 			imgBoundPoss.add(new Boundary((coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, (coord.x() - bb.x1) * 75 + 75, (coord.y() - bb.y1) * 75+75));
 		}
 		g2d.dispose();

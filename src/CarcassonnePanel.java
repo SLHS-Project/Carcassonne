@@ -31,7 +31,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		map = new CarcassonneMap(r, y, b, g);
 		System.out.println(map.tryAddAt(map.resources.getTiles().get(39), 44, 43));
 		System.out.println(map.tryAddAt(map.resources.getTiles().get(31), 44, 44));
-		System.out.println(map.tryAddAt(map.resources.getTiles().get(30), 43, 44));
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -40,10 +39,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		try {
 			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
 		}
-		
-		
 		catch(Exception E) {
-			System.out.println("Exception Error");
+		    E.printStackTrace();
 		}
 	}
 	

@@ -3,6 +3,7 @@ import tile.Orient;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
@@ -13,11 +14,19 @@ import java.util.concurrent.TimeoutException;
  * 		*Use static variable for easy access
  */
 public class Resources {
-    HashMap<Integer, CarcassonneTile> tiles;
+    public BufferedImage placeholder;
+    public HashMap<Integer, CarcassonneTile> tiles;
 
     public Resources(String tilelist) {
         TileParser parser = new TileParser();
         this.tiles = parser.loadTiles(tilelist);
+
+        this.placeholder= null;
+        try {
+            this.placeholder= ImageIO.read(CarcassonneTile.class.getResourceAsStream("/res/placeholder.png"));
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
     }
 
     public CarcassonneTile[] getRiverTiles() {
