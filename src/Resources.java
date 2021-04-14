@@ -3,11 +3,6 @@
  * -Holdes defined tiles for each id
  * 		*Use static variable for easy access
  */
-
-import java.awt.image.*;
-import javax.imageio.ImageIO;
-
-import javax.imageio.ImageIO;
 public class Resources {
 
 		public Resources()
