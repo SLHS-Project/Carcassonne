@@ -125,6 +125,7 @@ public class CarcassonneMap {
 
     // Rendering
     class Boundary {
+        public int tilex, tiley;
         public int x1, x2, y1, y2;
         public Boundary(int x1, int x2, int y1, int y2) {
             this.x1 = x1;
@@ -132,8 +133,60 @@ public class CarcassonneMap {
             this.y1 = y1;
             this.y2 = y2;
         }
-    }
-    public Boundary getBoundary() {
+		public Boundary(int x1, int x2, int y1, int y2, int tilex, int tiley) {
+			this.x1 = x1;
+			this.x2 = x2;
+			this.y1 = y1;
+			this.y2 = y2;
+			this.tilex = tilex;
+			this.tiley = tiley;
+		}
+        public void translate(int dx, int dy) {
+        	this.x1 += dx;
+        	this.x2 += dx;
+        	this.y1 += dy;
+        	this.y2 += dy;
+		}
+
+		@Override
+		public String toString() {
+			return "Boundary{" +
+					"x1=" + x1 +
+					", x2=" + x2 +
+					", y1=" + y1 +
+					", y2=" + y2 +
+					'}';
+		}
+
+		public int width() {
+			return (this.x1>this.x2)?this.x1-this.x2:this.x2-this.x1;
+		}
+
+		public int height() {
+			return (this.y1>this.y2)?this.y1-this.y2:this.y2-this.y1;
+		}
+
+		public int x() {
+			return (this.x1>this.x2)?this.x2:this.x1;
+		}
+		public int x2() {
+			return (this.x1<this.x2)?this.x2:this.x1;
+		}
+		public int y() {
+			return (this.y1>this.y2)?this.y2:this.y1;
+		}
+		public int y2() {
+			return (this.y1<this.y2)?this.y2:this.y1;
+		}
+
+		public boolean contains(int x, int y) {
+        	if(x > this.x() && x < this.x2()
+				&& y > this.y() && y < this.y2())
+        		return true;
+        	return false;
+		}
+	}
+	public Boundary getBoundary() {
         // x min
         int xmin = 43;
         for(int i = 43; i >= 0; i--) {
@@ -184,54 +237,43 @@ public class CarcassonneMap {
         }
         return new Boundary(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
     }
-    public BufferedImage __render() {
-        // get maximum/minimum x and y value
-        Boundary bb = this.getBoundary();
-        int width = bb.x2 - bb.x1 + 1;
-        int height = bb.y2 - bb.y1 + 1;
-        // composite
-        // 75 by 75 normally
-        BufferedImage r = new BufferedImage(width * 75, height * 75, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = r.createGraphics();
-        for(int x = bb.x1; x <= bb.x2; x++) {
-            for (int y = bb.y1; y <= bb.y2; y++) {
-                System.out.println(x + " " + y);
-                if(this.map[x][y] == null) continue;
-                g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * 75, (y - bb.y1) * 75, null);
-            }
-        }
-        ArrayList<Coordinate> poss = this.getPossibleLocations();
-
-        for(Coordinate coord: poss) {
-           g2d.setPaint ( new Color ( 20,20,20 ) );
-
-		}
-        g2d.dispose();
-        return r;
-    }
 
     class GameBoardGraphics {
         BufferedImage img;
+        ArrayList<Boundary> boundaries;
 
-        public GameBoardGraphics(BufferedImage img) {
+        public GameBoardGraphics(BufferedImage img, ArrayList<Boundary> boundaries) {
             this.img = img;
+            this.boundaries = boundaries;
 		}
 
 		public BufferedImage getImg() {
         	return img;
 		}
+
+		public ArrayList<Boundary> getBoundaries() {
+        	return this.boundaries;
+		}
+
+		@Override
+		public String toString() {
+			return "GameBoardGraphics{" +
+					"boundaries=" + boundaries +
+					'}';
+		}
 	}
 
     public GameBoardGraphics render(int h, int w) {
+        int tile_size = 75;
 		Boundary bb = this.getBoundary();
 		int width = bb.x2 - bb.x1 + 1;
 		int height = bb.y2 - bb.y1 + 1;
-		BufferedImage mapimg = new BufferedImage(width * 75, height * 75, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage mapimg = new BufferedImage(width * tile_size, height * tile_size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = mapimg.createGraphics();
 		for(int x = bb.x1; x <= bb.x2; x++) {
 			for (int y = bb.y1; y <= bb.y2; y++) {
 				if(this.map[x][y] == null) continue;
-				g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * 75, (y - bb.y1) * 75, null);
+				g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * tile_size, (y - bb.y1) * tile_size, null);
 			}
 		}
 		ArrayList<Boundary> imgBoundPoss = new ArrayList<>();
@@ -239,21 +281,21 @@ public class CarcassonneMap {
 		for(Coordinate coord: poss) {
 			g2d.setPaint ( new Color ( 20,20,20 ) );
 			if(resources.placeholder == null)
-				g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+				g2d.fillRect( (coord.x() - bb.x1) * tile_size, (coord.y() - bb.y1) * tile_size, tile_size, tile_size);
 			else
-				g2d.drawImage(resources.placeholder, (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75, null);
-			imgBoundPoss.add(new Boundary((coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, (coord.x() - bb.x1) * 75 + 75, (coord.y() - bb.y1) * 75+75));
+				g2d.drawImage(resources.placeholder, (coord.x() - bb.x1) * tile_size, (coord.y() - bb.y1) * tile_size, tile_size, tile_size, null);
+			imgBoundPoss.add(new Boundary((coord.x() - bb.x1) * tile_size, (coord.x() - bb.x1) * tile_size + tile_size,
+					(coord.y() - bb.y1) * tile_size, (coord.y() - bb.y1) * tile_size+tile_size, coord.x, coord.y));
 		}
 		g2d.dispose();
-		for(Boundary b: imgBoundPoss) {
-		//	b.
-		}
+		for(Boundary b: imgBoundPoss)
+		    b.translate(h/2 - mapimg.getWidth()/2, w/2 - mapimg.getHeight()/2);
 
 		BufferedImage r = new BufferedImage(h, w, BufferedImage.TYPE_INT_ARGB);
 		g2d = r.createGraphics();
 		g2d.drawImage(mapimg, h/2 - mapimg.getWidth()/2, w/2 - mapimg.getHeight()/2, null);
 		g2d.dispose();
-        return new GameBoardGraphics(r);
+        return new GameBoardGraphics(r, imgBoundPoss);
 	}
 
   //checks if any feature is completed
@@ -524,10 +566,10 @@ public class CarcassonneMap {
     
     public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
-		CarcassonnePlayer r=new CarcassonnePlayer();
-		CarcassonnePlayer y=new CarcassonnePlayer();
-		CarcassonnePlayer b=new CarcassonnePlayer();
-		CarcassonnePlayer g=new CarcassonnePlayer();
+		CarcassonnePlayer r=new CarcassonnePlayer("r");
+		CarcassonnePlayer y=new CarcassonnePlayer("y");
+		CarcassonnePlayer b=new CarcassonnePlayer("b");
+		CarcassonnePlayer g=new CarcassonnePlayer("g");
 
         CarcassonneMap map = new CarcassonneMap(r, y, b, g);
 
@@ -538,8 +580,9 @@ public class CarcassonneMap {
 		System.out.println(map.tryAddAt(t.get(43), 44, 44));
 
 		try {
+		    GameBoardGraphics gbg = map.render(1920, 1080);
             File outputfile = new File("C:\\Users\\k1702639\\Desktop\\a\\map.png");
-            ImageIO.write(map.__render(), "png", outputfile);
+            ImageIO.write(gbg.getImg(), "png", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
         }

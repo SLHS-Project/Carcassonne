@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.Queue;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
-	
+	private CarcassonneMap.GameBoardGraphics gbg;
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
 	private Color grey = new Color(206, 206, 206);
@@ -73,11 +73,21 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
 
 		g.setColor(Color.black);
-        CarcassonneMap.GameBoardGraphics boardgraphics = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
+        this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
+
 		//g.drawImage(boardgraphics.getImg(), (getWidth()*20/1920+(getWidth()*1610/1920 - getWidth()*20/1920))/2 - boardgraphics.getImg().getWidth()/2,
 		//		(getHeight()*20/1080+(getHeight() - 2 * getHeight()*20/1080))/2 - boardgraphics.getImg().getHeight()/2, null);
-		g.drawImage(boardgraphics.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
+		g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
 		/* board area: *///g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
+
+        System.out.println(gbg.getBoundaries().size());
+
+        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
+            b.translate(getWidth()*20/1920, getHeight()*20/1080);
+        	g.drawRect(b.x(), b.y(), b.width(), b.height());
+        	System.out.println(b);
+		}
+
 		
 		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
 		g.setFont(f1);
@@ -106,7 +116,18 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	
 
 	public void mouseClicked(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
 
+		for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
+			b.translate(getWidth()*20/1920, getHeight()*20/1080);
+			if(b.contains(x, y)) {
+			    map.tryAddAt(map.resources.getTiles().get(10), b.tilex, b.tiley);
+				System.out.println("at " + b.tilex + " " + b.tiley);
+			}
+		}
+
+	    this.repaint();
 	}
 
 

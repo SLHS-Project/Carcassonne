@@ -29,12 +29,6 @@ public class Resources {
         }
     }
 
-<<<<<<< HEAD
-		public Resources()
-		{
-			
-		}
-		
     public CarcassonneTile[] getRiverTiles() {
         ArrayList<CarcassonneTile> ret = new ArrayList<>();
         ret.add(this.tiles.get(37));
@@ -55,5 +49,4 @@ public class Resources {
     public HashMap<Integer, CarcassonneTile> getTiles() {
         return this.tiles;
     }
->>>>>>> fcb6de870650cfdf06ae592d7ebc5526179a7074
 }
