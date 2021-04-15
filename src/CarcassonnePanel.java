@@ -23,10 +23,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private CarcassonneMap map;
 
 	public CarcassonnePanel() throws IOException {
-		r=new CarcassonnePlayer();
-		y=new CarcassonnePlayer();
-		b=new CarcassonnePlayer();
-		g=new CarcassonnePlayer();
+		r=new CarcassonnePlayer("red");
+		y=new CarcassonnePlayer("yellow");
+		b=new CarcassonnePlayer("blue");
+		g=new CarcassonnePlayer("green");
 
 		map = new CarcassonneMap(r, y, b, g);
 		System.out.println(map.tryAddAt(map.resources.getTiles().get(39), 44, 43));

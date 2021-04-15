@@ -25,6 +25,10 @@ public class Meeple {
 	{
 		return type;
 	}
+	public void setType(String t)
+	{
+		type=t;
+	}
 	
 	public BufferedImage getImg()
 	{
@@ -33,6 +37,8 @@ public class Meeple {
 	
 	public boolean available()
 	{
+		if(placed)
+			return false;
 		return true;
 	}
 	
