@@ -1,3 +1,6 @@
+import tile.CarcassonneTile;
+import tile.Rotation;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -12,9 +15,13 @@ import java.awt.geom.Ellipse2D;
 import java.util.concurrent.Executor;
 import java.util.*;
 import java.util.Queue;
+import tile.Rotation;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
 	private CarcassonneMap.GameBoardGraphics gbg;
+	private Rotation curr_rot;
+	private ArrayList<Integer> dec;
+	private CarcassonneTile curr_tile;
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
 	private Color grey = new Color(206, 206, 206);
@@ -28,7 +35,15 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		b=new CarcassonnePlayer("blue");
 		g=new CarcassonnePlayer("green");
 
+
 		map = new CarcassonneMap(r, y, b, g);
+
+		this.curr_rot = Rotation.D0;
+		this.curr_tile = map.resources.getTiles().get(1);
+		this.dec = new ArrayList<>();
+		for(int i = 0; i < 84; i++) this.dec.add(i);
+		this.dec.remove(37);
+
 		System.out.println(map.tryAddAt(map.resources.getTiles().get(39), 44, 43));
 		System.out.println(map.tryAddAt(map.resources.getTiles().get(31), 44, 44));
 		addKeyListener(this);
@@ -42,6 +57,11 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		catch(Exception E) {
 		    E.printStackTrace();
 		}
+	}
+
+	public CarcassonneTile fetchFromDec(int c) {
+	    this.dec.remove(c);
+		return this.map.resources.getTiles().get(c);
 	}
 	
 	public void paint(Graphics g) {
@@ -74,21 +94,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
 		g.setColor(Color.black);
         this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
-
-		//g.drawImage(boardgraphics.getImg(), (getWidth()*20/1920+(getWidth()*1610/1920 - getWidth()*20/1920))/2 - boardgraphics.getImg().getWidth()/2,
-		//		(getHeight()*20/1080+(getHeight() - 2 * getHeight()*20/1080))/2 - boardgraphics.getImg().getHeight()/2, null);
 		g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
-		/* board area: *///g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
 
-        System.out.println(gbg.getBoundaries().size());
-
-        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-            b.translate(getWidth()*20/1920, getHeight()*20/1080);
-        	g.drawRect(b.x(), b.y(), b.width(), b.height());
-        	System.out.println(b);
-		}
-
-		
 		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
 		g.setFont(f1);
 		g.setColor(Color.black);
@@ -104,6 +111,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		Font f2 = new Font("Times New Roman", 0, getHeight()*35/1080);
 		g.setFont(f2);
 		g.drawString("Current Tile: ", getWidth()*1630/1920, getHeight()*660/1080);
+
+		g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
+
 		Font f3 = new Font("Times New Roman", 0, getHeight()*25/1080);
 		g.setFont(f3);
 		g.drawString("Tiles Remaining: ", getWidth()*1625/1920, getHeight()*870/1080);
@@ -113,7 +123,18 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
 		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
 	}
-	
+
+	public void nextRot() {
+	    this.curr_rot = this.curr_rot.next();
+	    this.curr_tile.rotate(this.curr_rot);
+	}
+
+	public void fetchNewTile() {
+	    int tileindx = (int)(Math.random() * this.dec.size());
+	    this.curr_tile = fetchFromDec(tileindx);
+	    this.dec.remove(tileindx);
+	    this.curr_rot = Rotation.D0;
+	}
 
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
@@ -122,44 +143,42 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
 			b.translate(getWidth()*20/1920, getHeight()*20/1080);
 			if(b.contains(x, y)) {
-			    map.tryAddAt(map.resources.getTiles().get(10), b.tilex, b.tiley);
-				System.out.println("at " + b.tilex + " " + b.tiley);
+			    if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
+					System.out.println("added at " + b.tilex + " " + b.tiley);
+					fetchNewTile();
+				}
 			}
 		}
 
 	    this.repaint();
 	}
 
-
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-
-
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-	
-	
-
-
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-
-
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-	
-	
-	
 	@Override
 	public void keyPressed(KeyEvent e) {
+	    switch(e.getKeyChar()) {
+			case 'r':
+			    this.nextRot();
+		}
+
+		System.out.println(this.curr_rot);
+
+		this.repaint();
 	}
 
 

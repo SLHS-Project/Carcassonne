@@ -115,7 +115,7 @@ public class CarcassonneTile {
 	}
 	
 	public boolean fit(CarcassonneTile t, Orient o) {
-		return this.sides[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
+		return this.getRotatedSides()[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
 	}
 	
 	public boolean isCR()
