@@ -47,7 +47,7 @@
 47 [river: ] [city: SW] [road: NE] [monastery: ]
 48 [river: ] [city: SW] [road: ] [monastery: ]
 49 [river:SE] [city: ] [road: ] [monastery: ]
-50 [river: SW] [city: ] [road: NS] [monastery: ]
+50 [river: EW] [city: ] [road: NS] [monastery: ]
 51 [river: EW] [city: NS] [road: ] [monastery: ]
 52 [river: NW] [city: ] [road: SE] [monastery: ]
 53 [river: ] [city: NSE] [road: W] [monastery: ]

@@ -20,6 +20,7 @@ import tile.Rotation;
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
 	private CarcassonneMap.GameBoardGraphics gbg;
 	private Rotation curr_rot;
+	private ArrayList<Integer> river;
 	private ArrayList<Integer> dec;
 	private CarcassonneTile curr_tile;
 	private Color brown = new Color(210, 161, 132);
@@ -38,14 +39,24 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
 		map = new CarcassonneMap(r, y, b, g);
 
-		this.curr_rot = Rotation.D0;
-		this.curr_tile = map.resources.getTiles().get(1);
 		this.dec = new ArrayList<>();
+		this.river = new ArrayList<>();
+		this.river.add(38);
+		this.river.add(40);
+		this.river.add(49);
+		this.river.add(50);
+		this.river.add(51);
+		this.river.add(52);
+		this.river.add(61);
+		this.river.add(73);
+		this.river.add(74);
+		this.river.add(75);
+		this.dec.removeIf(v -> v.equals(37));
 		for(int i = 0; i < 84; i++) this.dec.add(i);
-		this.dec.remove(37);
+		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
 
-		System.out.println(map.tryAddAt(map.resources.getTiles().get(39), 44, 43));
-		System.out.println(map.tryAddAt(map.resources.getTiles().get(31), 44, 44));
+		this.fetchNewTile();
+
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -59,11 +70,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		}
 	}
 
-	public CarcassonneTile fetchFromDec(int c) {
-	    this.dec.remove(c);
-		return this.map.resources.getTiles().get(c);
-	}
-	
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g.setColor(brown);
@@ -130,10 +136,18 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	}
 
 	public void fetchNewTile() {
-	    int tileindx = (int)(Math.random() * this.dec.size());
-	    this.curr_tile = fetchFromDec(tileindx);
-	    this.dec.remove(tileindx);
-	    this.curr_rot = Rotation.D0;
+	    int tileindx;
+		if(!this.river.isEmpty())
+			tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
+		else
+			tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
+
+		this.curr_tile = this.map.resources.getTiles().get(tileindx);
+		this.dec.removeIf(v -> v.equals(tileindx));
+		this.river.removeIf(v -> v.equals(tileindx));
+
+		System.out.println(tileindx + " " + this.river);
+		this.curr_rot = Rotation.D0;
 	}
 
 	public void mouseClicked(MouseEvent e) {

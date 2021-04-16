@@ -29,7 +29,7 @@ public class Resources {
         }
     }
 
-    public CarcassonneTile[] getRiverTiles() {
+    public ArrayList<CarcassonneTile> getRiverTiles() {
         ArrayList<CarcassonneTile> ret = new ArrayList<>();
         ret.add(this.tiles.get(37));
         ret.add(this.tiles.get(38));
@@ -42,7 +42,7 @@ public class Resources {
         ret.add(this.tiles.get(73));
         ret.add(this.tiles.get(74));
         ret.add(this.tiles.get(75));
-        return ret.toArray(new CarcassonneTile[ret.size()]);
+        return ret;
     }
 
     //excluding river tiles
