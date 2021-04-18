@@ -13,6 +13,15 @@ public enum Rotation {
     public int iden() {
         return this.id;
     }
+    public Rotation fromIden(int i) {
+        for(Rotation r: Rotation.values())
+            if(r.id == i)
+                return r;
+        return D0;
+    }
+    public Rotation next() {
+        return this.fromIden((this.iden() + 1) % 4);
+    }
     public int degree() {
         switch(this.iden()) {
             case 0: return 0;
