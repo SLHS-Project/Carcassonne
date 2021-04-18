@@ -13,7 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.*;
 import java.util.Queue;
 
-public class BeginningPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
+public class InstructionsPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
 	
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
@@ -22,7 +22,7 @@ public class BeginningPanel extends JPanel implements MouseListener, ActionListe
 	private BufferedImage logo;
 	
 
-	public BeginningPanel() throws IOException
+	public InstructionsPanel() throws IOException
 	{
 		Scanner input = new Scanner(System.in);
 		addKeyListener(this);
@@ -47,28 +47,15 @@ public class BeginningPanel extends JPanel implements MouseListener, ActionListe
 		Graphics2D g2 = (Graphics2D) g;
 		g.setColor(yellow);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		g.drawImage(logo, getWidth()*500/1920, getHeight()*50/1080, getWidth()*920/1920, getHeight()*350/1080, null);
 		g.setColor(Color.RED);
 		g.fillRect(getWidth()*50/1920, getHeight()*850/1080, getWidth()*200/1920, getHeight()*200/1080);
 		g.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(6));
 		g2.drawRect(getWidth()*50/1920, getHeight()*850/1080, getWidth()*200/1920, getHeight()*200/1080);
-		g2.drawRect(getWidth()*500/1920, getHeight()*50/1080, getWidth()*920/1920, getHeight()*350/1080);
-		g.setColor(lightorangebrown);
-		g.fillRect(getWidth()*700/1920, getHeight()*500/1080, getWidth()*500/1920, getHeight()*200/1080);
-		g.setColor(Color.BLACK);
-		g2.drawRect(getWidth()*700/1920, getHeight()*500/1080, getWidth()*500/1920, getHeight()*200/1080);
-		Font f1 = new Font("Times New Roman", 0, getHeight()*100/1080);
-		g.setFont(f1);
-		g.drawString("START", getWidth()*800/1920, getHeight()*630/1080);
-//		g.drawString("?", getWidth()*125/1920, getHeight()*955/1080);
-//		Font f2 = new Font("Times New Roman", 0, getHeight()*30/1080);
-//		g.setFont(f2);
-//		g.drawString("(Instructions)", getWidth()*70/1920, getHeight()*1010/1080);
 		Font f2 = new Font("Times New Roman", 0, getHeight()*30/1080);
 		g.setFont(f2);
 		g.drawString("Press '?'", getWidth()*90/1920, getHeight()*955/1080);
-		g.drawString("For Instructions", getWidth()*70/1920, getHeight()*1010/1080);
+		g.drawString("To Go Back", getWidth()*70/1920, getHeight()*1010/1080);
 		
 	}
 	

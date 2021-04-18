@@ -21,28 +21,29 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private BufferedImage logo;
 	
 
-	public CarcassonnePanel() throws IOException
-	{
-		Scanner input = new Scanner(System.in);
+	public CarcassonnePanel() throws IOException {
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		addMouseListener(this);
 		
+<<<<<<< HEAD
 		try
 		{
 			logo = ImageIO.read(BeginningPanel.class.getResource("/Images/logo.jpg"));
+=======
+		try {
+			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
+>>>>>>> bf25f144b6b951c56f939418a02f5078c713b30f
 		}
 		
 		
-		catch(Exception E)
-		{
+		catch(Exception E) {
 			System.out.println("Exception Error");
 		}
 	}
 	
-	public void paint(Graphics g)
-	{ 
+	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g.setColor(yellow);
 		g.fillRect(0, 0, getWidth(), getHeight());
@@ -60,7 +61,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
 		g.drawRect(0, 0, getWidth(), getHeight());
 		
-		
+		// board location: getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080
 		g.setColor(Color.black);
 		g.drawLine(getWidth()*1610/1920, getHeight()*20/1080, getWidth()*1610/1920, getHeight()-getHeight()*25/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*170/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080);
@@ -70,8 +71,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
 		g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
-	//	g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
-		
+		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
+
+		g.setColor(Color.black);
+		// board area: g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
 		
 		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
 		g.setFont(f1);
@@ -99,8 +102,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	}
 	
 
-	public void mouseClicked(MouseEvent e) 
-	{
+	public void mouseClicked(MouseEvent e) {
 		
 	
 	}
@@ -109,14 +111,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
@@ -125,45 +125,36 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		
 	}
 
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
-	
-
 }
 
