@@ -42,6 +42,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.dec = new ArrayList<>();
 		this.river = new ArrayList<>();
 		this.river.add(38);
+		this.river.add(39);
 		this.river.add(40);
 		this.river.add(49);
 		this.river.add(50);
@@ -53,6 +54,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.river.add(75);
 		this.dec.removeIf(v -> v.equals(37));
 		for(int i = 0; i < 84; i++) this.dec.add(i);
+		this.dec.remove(37);
 		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
 
 		this.fetchNewTile();
@@ -136,17 +138,22 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	}
 
 	public void fetchNewTile() {
-	    int tileindx;
-		if(!this.river.isEmpty())
-			tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
+	    int tileindx = 0;
+		if(!this.river.isEmpty()) {
+		    // 75 should be the last
+			while(tileindx == 0 || (tileindx == 75 && this.river.size() != 1))
+				tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
+		}
 		else
 			tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
 
-		this.curr_tile = this.map.resources.getTiles().get(tileindx);
-		this.dec.removeIf(v -> v.equals(tileindx));
-		this.river.removeIf(v -> v.equals(tileindx));
+		int ftileindx = tileindx;
+		System.out.println(ftileindx + " " + tileindx);
+		//this.curr_tile = this.map.resources.getTiles().get(tileindx);
+		this.curr_tile = this.map.resources.getTiles().get(66);
+		this.dec.removeIf(v -> v.equals(ftileindx));
+		this.river.removeIf(v -> v.equals(ftileindx));
 
-		System.out.println(tileindx + " " + this.river);
 		this.curr_rot = Rotation.D0;
 	}
 
@@ -195,19 +202,14 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.repaint();
 	}
 
-
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-
-
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub

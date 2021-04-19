@@ -72,6 +72,9 @@ public class CarcassonneMap {
         if(this.map[x+1][y] != null && !this.map[x+1][y].fit(t, Orient.W)) ret.add(Orient.E); // right
 
         // TODO fix
+        System.out.println(t);
+		System.out.println(this.map[x+1][y]);
+		System.out.println(this.map[x][y+1]);
 
 		return ret;
     }
@@ -266,16 +269,25 @@ public class CarcassonneMap {
 	}
 
     public GameBoardGraphics render(int h, int w) {
-        int tile_size = 75;
+    	// TODO fix this
+    	System.out.println(h+ " " + w);
+		int tile_size = 75;
 		Boundary bb = this.getBoundary();
 		int width = bb.x2 - bb.x1 + 1;
 		int height = bb.y2 - bb.y1 + 1;
+
+		// tw * height == h
+		// tw = h/height
+		if ((width) * tile_size > w) tile_size = w/(width);
+		if ((height) * tile_size > h) tile_size = h/(height);
+		System.out.println(h + tile_size + " " + ((height) * tile_size));
+
 		BufferedImage mapimg = new BufferedImage(width * tile_size, height * tile_size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = mapimg.createGraphics();
 		for(int x = bb.x1; x <= bb.x2; x++) {
 			for (int y = bb.y1; y <= bb.y2; y++) {
 				if(this.map[x][y] == null) continue;
-				g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * tile_size, (y - bb.y1) * tile_size, null);
+				g2d.drawImage(this.map[x][y].getImage(), (x - bb.x1) * tile_size, (y - bb.y1) * tile_size, tile_size, tile_size,  null);
 			}
 		}
 		ArrayList<Boundary> imgBoundPoss = new ArrayList<>();
@@ -578,8 +590,18 @@ public class CarcassonneMap {
 		TileParser p = new TileParser();
 		HashMap<Integer, CarcassonneTile> t = p.loadTiles("src/res/tileImg/tile_data.txt");
 
-		System.out.println(map.tryAddAt(t.get(38), 44, 43));
-		System.out.println(map.tryAddAt(t.get(43), 44, 44));
+		t.get(49).rotate(Rotation.D180);
+		System.out.println(map.tryAddAt(t.get(49), 44, 43));
+		t.get(40).rotate(Rotation.D270);
+		System.out.println(map.tryAddAt(t.get(40), 44, 42));
+		t.get(73).rotate(Rotation.D270);
+		System.out.println(map.tryAddAt(t.get(73), 45, 42));
+		t.get(52).rotate(Rotation.D180);
+		System.out.println(map.tryAddAt(t.get(52), 45, 41));
+
+		t.get(17).rotate(Rotation.D180);
+		System.out.println(map.tryAddAt(t.get(17), 44, 41));
+		map.map[44][41] = t.get(17);
 
 		try {
 		    GameBoardGraphics gbg = map.render(1920, 1080);
