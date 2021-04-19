@@ -20,7 +20,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -30,8 +29,11 @@ public class CarcassonneMap {
     public HashMap<Integer, CarcassonneTile> tile_ref; //river tiles are 37, 38, 39, 40, 49, 50, 51, 52, 61, 73, 74, 75
     
     private TreeMap<CarcassonneTile, Point> Map;
-  	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
-  	private TreeMap<ArrayList<Integer>, String> farmlands;
+    public Resources resources;
+
+  	private TreeMap< Boolean, ArrayList<CarcassonneTile>> cities;
+  	private TreeMap<String, ArrayList<CarcassonneTile>> farmlands;
+  	private TreeMap<Boolean, ArrayList<CarcassonneTile>> roads;  //decide if to use this or not, keeps track of all roads completed and incomplete //makes scoring much easier
   	private ArrayList<CarcassonneTile> completedTiles; //temporary storing
   	private CarcassonnePlayer red, yellow, blue, green;
   	private final int WIDTH=1600;
@@ -52,12 +54,12 @@ public class CarcassonneMap {
   		tileSize=HEIGHT/4;
   		completedTiles=new ArrayList<>();
 
-		TileParser p = new TileParser();
-  		this.tile_ref = p.loadTiles("src/res/tileImg/tile_data.txt");
+
+  		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
 		// 0, 0 is left, top
         this.map = new CarcassonneTile[85][85];
-        this.tryAddAt(tile_ref.get(37), 43, 43);
+        this.tryAddAt(resources.getTiles().get(37), 43, 43);
     }
 
 
@@ -206,8 +208,17 @@ public class CarcassonneMap {
         for(Coordinate coord: poss) {
            g2d.setPaint ( new Color ( 20,20,20 ) );
            // TODO Replace this black rectangle with proper placeholder.
-           g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
-        }
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(CarcassonneTile.class.getResource("/res/placeholder.png"));
+			} catch (IOException e) {
+			    System.out.println(e.getMessage());
+			}
+			if(img == null)
+				g2d.fillRect( (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75);
+			else
+				g2d.drawImage(img, (coord.x() - bb.x1) * 75, (coord.y() - bb.y1) * 75, 75, 75, null);
+		}
         g2d.dispose();
         return r;
     }
@@ -259,7 +270,7 @@ public class CarcassonneMap {
   	public String complete (CarcassonneTile tile)
   	{
   		String s="";
-  		if(completeRD(tile, ""))
+  		if(completeRD(tile))
   			s+="RD ";
   		if(completeC(tile))
   			s+="C ";
@@ -268,9 +279,9 @@ public class CarcassonneMap {
   		
   		return s;
   	}
-  	private boolean completeRD (CarcassonneTile tile, String direction) //direction is which way the road extends on this tile
+  	
+  	private boolean completeRD (CarcassonneTile tile)
   	{
-  		completedTiles.clear();
   		
   		Side[] s = tile.getSides();
   		String temp="";
@@ -290,10 +301,48 @@ public class CarcassonneMap {
   		}
   		//consists of the direction of the road: "N W"
   		String[] rd=temp.split(" ");
-  		//if the road has two exists, then it did not end a road
-  			if(rd.length==2)
-  				return false;
   			
+  		ArrayList<CarcassonneTile> list=new ArrayList<>();
+  		for(String direction: rd)
+  		{
+  				Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				//if the tile exist and has road 
+  				if(tempTile!=null && tempTile.checkRdDirections()>0)
+  				{
+  						list=contains(tempTile, "RD");
+  						list.add(tile); //add the new tile to the arraylist in roads
+  					//if the road has two exists, then it did not end a road
+  		  			if(rd.length==2)
+  		  				return false; 
+  		  		
+  		  			
+  		  			for(CarcassonneTile t: list)
+  		  			{
+  		  					if(t.checkRdDirections()==1 || t.isCR())
+  		  					{
+  		  						for(Boolean b: roads.keySet()) {
+  		  							if(roads.get(b).equals(list)) {
+  		  								roads.put(true, list);
+  		  								roads.remove(false, list);
+  		  								return true;
+  		  							}
+  		  						}
+  		  					}
+  		  			}	
+  				}
+  		}
+  		return false;
+  		/*	
   		Point tempPt;
   		Point loc=Map.get(tile);
   		String lineD="";
@@ -312,19 +361,19 @@ public class CarcassonneMap {
   				tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
   				lineD="N";}
   			
-  			CarcassonneTile tile1=findLoc(tempPt);
+  			CarcassonneTile tile1=findTile(tempPt);
   			if(tile1!=null) {
   				completedTiles.add(tile);
-  				completeRd(findLoc(tempPt), lineD);
+  				completeRd(findTile(tempPt), lineD);
   			}
   			if(completedTiles.size()<2)
   				return false;
   			return true;
   		}
   		System.out.println("Some error with completeRd function");
-  		return false;
+  		return false;*/
   	}
-  	private void completeRd(CarcassonneTile tile, String lineD)
+  	/*private void completeRd(CarcassonneTile tile, String lineD)
   	{
   		Side[] s = tile.getSides();
   		String temp="";
@@ -373,12 +422,12 @@ public class CarcassonneMap {
   			tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
   			lineD+="W";}
   			
-  		CarcassonneTile tile1=findLoc(tempPt);
+  		CarcassonneTile tile1=findTile(tempPt);
   		//if no tile exist, the road is not complete, erase all items in the arraylist
   		if(tile1==null)
   			completedTiles.clear();
   		completeRd(tile1, lineD);
-  	}
+  	}*/
   	
   	private boolean completeC (CarcassonneTile tile)
   	{
@@ -408,16 +457,53 @@ public class CarcassonneMap {
   	//receive the just placed tile, return the center monastery tile if completed, else return null
   	private CarcassonneTile completeM (CarcassonneTile tile)
   	{
+  		Point loc=Map.get(tile);
   		CarcassonneTile MTile=null;
+  		
+  		int x=-tileSize;
+  		int y=-tileSize;
+  		for(int i=0; i<9; i++) {
+  			Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+  			CarcassonneTile t= findTile(newLoc);
+  			if(t!=null) {
+  				if(t.isMonastery())
+  					MTile=t;
+  			}
+  			if(MTile!=null)
+  				break;
+  			
+  			if(x!=tileSize)
+  				x+=tileSize;
+  			else
+  				y+=tileSize;
+  		}
+  		
+  		x=-tileSize;
+  		y=-tileSize;
+  		if(MTile!=null){
+  			loc=Map.get(MTile);
+  			for(int i=0; i<9; i++) {
+    			Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+    			CarcassonneTile t= findTile(newLoc);
+    			if(t==null)
+    				return null;
+    				
+    			if(x!=tileSize)
+      			x+=tileSize;
+      		else
+      			y+=tileSize;}
+  		}
+  		
   		return MTile;
   	}
   	
   	//assume the just-placed tile completed a road, do score calculation
   	public void roadScoring(CarcassonneTile tile, Point loc)
   	{
+  		
   		//tileCodes have all the tiles that the completed road is on
   		//check for meeples
-  		String players=meepleCompare(completedTiles, "RD");
+  		String players=meepleCompare(contains(tile, "RD"), "Thief");
   		scoreCalc(players, 1, completedTiles.size());
   	}
   	
@@ -425,20 +511,19 @@ public class CarcassonneMap {
   	public void cityScoring(CarcassonneTile tile)
   	{
   		ArrayList<CarcassonneTile> C2Score=new ArrayList<>();
-  		for(ArrayList<CarcassonneTile> a: cities.keySet()) {
-  			if(a.contains(tile.getCode()))
+  		for(ArrayList<CarcassonneTile> a: cities.values()) {
+  			if(a.contains(tile.getCode())) {
   				C2Score=a;
+  				break;
+  			}
+  				
   		}
   		
-  		String owners=meepleCompare(C2Score, "C");
+  		String owners=meepleCompare(C2Score, "Knight");
   		if (owners.length()<2)
   			return;
   		
-  		int shieldNum=0;
-  		for(CarcassonneTile t: C2Score) {
-  			if(t.hasShield())
-  				shieldNum++;
-  		}
+  		int shieldNum=shieldNum(C2Score);
   		int score=2*C2Score.size()+2*shieldNum;
   		
   		String[] p=owners.split(" ");
@@ -458,7 +543,84 @@ public class CarcassonneMap {
   		callPlayer(name).addScore(9);
   	}
   	
-  	private CarcassonneTile findLoc(Point pt)
+  	//end of game scoring
+  	public void endOfGameScoring()
+  	{
+  		finalCityScoring();
+  		finalMonasteryScoring();
+  		finalRoadScoring();
+  	}
+  	public void finalCityScoring()
+  	{
+  		for(Boolean boo: cities.keySet()) {
+  			ArrayList<CarcassonneTile> list=cities.get(boo);
+  			//if city incomplete
+  			if(!boo) {
+  				int shields=shieldNum(list);
+  				String owners=meepleCompare(list, "Knight");
+  				String[] names=owners.split(" ");
+  				for(String s: names) {
+  					callPlayer(s).addScore(list.size()+shields);
+  				}
+  			}
+  		}
+  	}
+  	
+  	public void finalMonasteryScoring()
+  	{
+  			for(CarcassonneTile tile: Map.keySet()) {
+  				if(tile.isMonastery()) {
+  					Meeple mp=tile.getMeeple();
+  					if(mp!=null) {
+  						Point loc=Map.get(tile);
+  						int totalTiles=0;
+  						int x=-tileSize;
+  						int y=-tileSize;
+  						for(int i=0; i<9; i++) {
+  								Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+  								CarcassonneTile t= findTile(newLoc);
+  								if(t!=null) {
+  									totalTiles++;
+  								}
+  								if(x!=tileSize)
+  									x+=tileSize;
+  								else
+  									y+=tileSize;
+  						}
+  						
+  						callPlayer(mp.getColor()).addScore(totalTiles);
+  					}
+  		  		
+  				}
+  			}
+  	}
+  	
+  	public void finalRoadScoring()
+  	{
+  		for(Boolean boo: roads.keySet()) {
+  			ArrayList<CarcassonneTile> list=roads.get(boo);
+  			//if road incomplete
+  			if(!boo) {
+  				String owners=meepleCompare(list, "Thief");
+  				String[] names=owners.split(" ");
+  				for(String s: names) {
+  					callPlayer(s).addScore(list.size());
+  				}
+  			}
+  		}
+  	}
+  	
+  	private int shieldNum(ArrayList<CarcassonneTile> tiles)
+  	{
+  		int num=0;
+  		for(CarcassonneTile t: tiles) {
+  			if(t.hasShield())
+  				num++;
+  		}
+  		return num;
+  	}
+  	
+  	private CarcassonneTile findTile(Point pt)
   	{
   		for(CarcassonneTile t: Map.keySet()) {
   			if(Map.get(t).equals(pt))
@@ -475,7 +637,7 @@ public class CarcassonneMap {
   		{
   			Meeple meeple=t.getMeeple();
   			if(meeple!=null) {
-  				if (meeple.getType().equals(type))
+  				if (meeple.getType().equalsIgnoreCase(type))
   				{
   					String owner=meeple.getColor();
   					//add the owner of meeple to the treemap, but check if it exist first
@@ -518,15 +680,42 @@ public class CarcassonneMap {
   		System.out.println("DID NOT FIND A PLAYER WITH NAME "+name);
   		return null;
   	}
-
+  	
+  	private ArrayList<CarcassonneTile> contains(CarcassonneTile tile, String type)
+  	{
+  			if(type.equals("RD"))
+  			{
+  				for(ArrayList<CarcassonneTile> list: roads.values()) {
+  					for(CarcassonneTile t: list)
+  					{
+  						if(t.getCode()==tile.getCode())
+  							return list;
+  					}
+  				}
+  				System.out.println("error, did not find tile in treemap roads");
+  			}
+  			
+  			if(type.equals("C"))
+  			{
+  				for(ArrayList<CarcassonneTile> list: cities.values()) {
+  					for(CarcassonneTile t: list)
+  					{
+  						if(t.getCode()==tile.getCode())
+  							return list;
+  					}
+  				}
+  				System.out.println("error, did not find tile in treemap cities");
+  			}
+  			return null;
+  	}
     
-    
+  	
     public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
-		CarcassonnePlayer r=new CarcassonnePlayer();
-		CarcassonnePlayer y=new CarcassonnePlayer();
-		CarcassonnePlayer b=new CarcassonnePlayer();
-		CarcassonnePlayer g=new CarcassonnePlayer();
+		CarcassonnePlayer r=new CarcassonnePlayer("red");
+		CarcassonnePlayer y=new CarcassonnePlayer("yellow");
+		CarcassonnePlayer b=new CarcassonnePlayer("blue");
+		CarcassonnePlayer g=new CarcassonnePlayer("green");
 
         CarcassonneMap map = new CarcassonneMap(r, y, b, g);
 

@@ -20,7 +20,6 @@ public class Resources {
         this.tiles = parser.loadTiles(tilelist);
     }
 
-<<<<<<< HEAD
 		public Resources()
 		{
 			
@@ -43,8 +42,8 @@ public class Resources {
     }
 
     //excluding river tiles
-    public HashMap<Integer, CarcassonneTile> getTiles() {
+    public HashMap<Integer, CarcassonneTile> getTiles() 
+    {
         return this.tiles;
     }
->>>>>>> fcb6de870650cfdf06ae592d7ebc5526179a7074
 }
