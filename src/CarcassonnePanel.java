@@ -149,8 +149,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
 		int ftileindx = tileindx;
 		System.out.println(ftileindx + " " + tileindx);
-		//this.curr_tile = this.map.resources.getTiles().get(tileindx);
-		this.curr_tile = this.map.resources.getTiles().get(66);
+		this.curr_tile = this.map.resources.getTiles().get(tileindx);
 		this.dec.removeIf(v -> v.equals(ftileindx));
 		this.river.removeIf(v -> v.equals(ftileindx));
 

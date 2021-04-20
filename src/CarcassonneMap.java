@@ -268,7 +268,7 @@ public class CarcassonneMap {
 		}
 	}
 
-    public GameBoardGraphics render(int h, int w) {
+    public GameBoardGraphics render(int w, int h) {
     	// TODO fix this
     	System.out.println(h+ " " + w);
 		int tile_size = 75;
@@ -303,11 +303,11 @@ public class CarcassonneMap {
 		}
 		g2d.dispose();
 		for(Boundary b: imgBoundPoss)
-		    b.translate(h/2 - mapimg.getWidth()/2, w/2 - mapimg.getHeight()/2);
+		    b.translate(w/2 - mapimg.getWidth()/2, h/2 - mapimg.getHeight()/2);
 
-		BufferedImage r = new BufferedImage(h, w, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage r = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		g2d = r.createGraphics();
-		g2d.drawImage(mapimg, h/2 - mapimg.getWidth()/2, w/2 - mapimg.getHeight()/2, null);
+		g2d.drawImage(mapimg, w/2 - mapimg.getWidth()/2, h/2 - mapimg.getHeight()/2, null);
 		g2d.dispose();
         return new GameBoardGraphics(r, imgBoundPoss);
 	}
