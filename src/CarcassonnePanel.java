@@ -16,15 +16,10 @@ import java.util.concurrent.Executor;
 import java.util.*;
 import java.util.Queue;
 import tile.Rotation;
-<<<<<<< HEAD
+
 import tile.CarcassonneTile;
 
-public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
-	
-=======
-
-public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
+public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
 	private CarcassonneMap.GameBoardGraphics gbg;
 	private Rotation curr_rot;
 	private ArrayList<Integer> river;
@@ -49,10 +44,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.dec = new ArrayList<>();
 		this.river = new ArrayList<>();
 		this.river.add(38);
-<<<<<<< HEAD
-=======
 		this.river.add(39);
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
 		this.river.add(40);
 		this.river.add(49);
 		this.river.add(50);
@@ -64,10 +56,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.river.add(75);
 		this.dec.removeIf(v -> v.equals(37));
 		for(int i = 0; i < 84; i++) this.dec.add(i);
-<<<<<<< HEAD
-=======
 		this.dec.remove(37);
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
 		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
 
 		this.fetchNewTile();
@@ -144,44 +133,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
 		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
 	}
-<<<<<<< HEAD
-
-	public void nextRot() {
-	    this.curr_rot = this.curr_rot.next();
-	    this.curr_tile.rotate(this.curr_rot);
-	}
-
-	public void fetchNewTile() {
-	    int tileindx;
-		if(!this.river.isEmpty())
-			tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
-		else
-			tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
-
-		this.curr_tile = this.map.resources.getTiles().get(tileindx);
-		this.dec.removeIf(v -> v.equals(tileindx));
-		this.river.removeIf(v -> v.equals(tileindx));
-
-		System.out.println(tileindx + " " + this.river);
-		this.curr_rot = Rotation.D0;
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-
-		for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-			b.translate(getWidth()*20/1920, getHeight()*20/1080);
-			if(b.contains(x, y)) {
-			    if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
-					System.out.println("added at " + b.tilex + " " + b.tiley);
-					fetchNewTile();
-				}
-			}
-		}
-
-	    this.repaint();
-=======
 
 	public void nextRot() {
 	    this.curr_rot = this.curr_rot.next();
@@ -205,7 +156,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.river.removeIf(v -> v.equals(ftileindx));
 
 		this.curr_rot = Rotation.D0;
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -221,8 +171,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 				}
 			}
 		}
-
-	    this.repaint();
+    this.repaint();
 	}
 
 	@Override

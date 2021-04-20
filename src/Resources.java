@@ -24,21 +24,13 @@ public class Resources {
     public Resources(String tilelist) {
         TileParser parser = new TileParser();
         this.tiles = parser.loadTiles(tilelist);
-
-<<<<<<< HEAD
-       this.placeholder= null;
-        try {
-           this.placeholder= ImageIO.read(CarcassonneTile.class.getResourceAsStream("/res/placeholder.png"));
-=======
         this.placeholder= null;
         try {
             this.placeholder= ImageIO.read(CarcassonneTile.class.getResourceAsStream("/res/placeholder.png"));
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
         } catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
-
     public ArrayList<CarcassonneTile> getRiverTiles() {
         ArrayList<CarcassonneTile> ret = new ArrayList<>();
         ret.add(this.tiles.get(37));
@@ -52,13 +44,8 @@ public class Resources {
         ret.add(this.tiles.get(73));
         ret.add(this.tiles.get(74));
         ret.add(this.tiles.get(75));
-<<<<<<< HEAD
 
-       return ret;
-
-=======
         return ret;
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
     }
 
     //excluding river tiles
@@ -66,9 +53,4 @@ public class Resources {
     public HashMap<Integer, CarcassonneTile> getTiles() {
         return this.tiles;
     }
-<<<<<<< HEAD
-
 }
-=======
-}
->>>>>>> bee3a49f189197fc7b9c17e7009d3ca3807dfdd4
