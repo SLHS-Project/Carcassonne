@@ -114,6 +114,11 @@ public class CarcassonneTile {
 		};
 	}
 	
+	public boolean isMonastery()
+	{
+		return monastery;
+	}
+	
 	public boolean fit(CarcassonneTile t, Orient o) {
 		return this.getRotatedSides()[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
 	}

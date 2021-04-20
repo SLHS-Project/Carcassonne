@@ -17,7 +17,9 @@ import java.util.*;
 import java.util.Queue;
 import tile.Rotation;
 
-public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
+import tile.CarcassonneTile;
+
+public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
 	private CarcassonneMap.GameBoardGraphics gbg;
 	private Rotation curr_rot;
 	private ArrayList<Integer> river;
@@ -169,8 +171,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 				}
 			}
 		}
-
-	    this.repaint();
+    this.repaint();
 	}
 
 	@Override
