@@ -123,6 +123,11 @@ public class TileParser {
         } catch (FileNotFoundException e) {
             System.out.println("failed to load file: " + e);
         }
+
+        for(int i = 1; i <= 84; i++)
+            if (ret.get(i).getImage() == null)
+                System.out.println("Failed to load " + i);
+
         return ret;
     }
     public static void main(String args[]) {
