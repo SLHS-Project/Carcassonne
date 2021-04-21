@@ -65,12 +65,21 @@ public class CarcassonneTile {
 		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
 		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = r.createGraphics();
-		g2d.setPaint ( new Color (12, 12, 12) );
-		g2d.fillRect ( 0, 0, r.getWidth(), r.getHeight() );
-		g2d.drawImage(tileimg, 0, 0, null);
+		g2d.drawImage(this.resize(tileimg.getSubimage(4, 4, tileimg.getWidth()-5, tileimg.getHeight()-5), 75, 75), 0, 0, null);
 		g2d.dispose();
 
 		return r;
+	}
+
+	public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+		Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+
+		return dimg;
 	}
 
 	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
