@@ -20,199 +20,234 @@ import tile.Rotation;
 import tile.CarcassonneTile;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
-	private CarcassonneMap.GameBoardGraphics gbg;
-	private Rotation curr_rot;
-	private ArrayList<Integer> river;
-	private ArrayList<Integer> dec;
-	private CarcassonneTile curr_tile;
-	private Color brown = new Color(210, 161, 132);
-	private Color yellow = new Color(255, 254, 185);
-	private Color grey = new Color(206, 206, 206);
-	private BufferedImage logo;
-	private CarcassonnePlayer r, y, b, g;
-	private CarcassonneMap map;
+    private String statusMessage;
+    private CarcassonneMap.GameBoardGraphics gbg;
+    private Rotation curr_rot;
+    private ArrayList<Integer> river;
+    private ArrayList<Integer> dec;
+    private CarcassonneTile curr_tile;
+    private Color brown = new Color(210, 161, 132);
+    private Color yellow = new Color(255, 254, 185);
+    private Color grey = new Color(206, 206, 206);
+    private BufferedImage logo;
+    private CarcassonnePlayer r, y, b, g;
+    private CarcassonneMap map;
 
-	public CarcassonnePanel() throws IOException {
-		r=new CarcassonnePlayer("red");
-		y=new CarcassonnePlayer("yellow");
-		b=new CarcassonnePlayer("blue");
-		g=new CarcassonnePlayer("green");
+    int tx, ty;
 
 
-		map = new CarcassonneMap(r, y, b, g);
+    public CarcassonnePanel() throws IOException {
+        r=new CarcassonnePlayer("red");
+        y=new CarcassonnePlayer("yellow");
+        b=new CarcassonnePlayer("blue");
+        g=new CarcassonnePlayer("green");
 
-		this.dec = new ArrayList<>();
-		this.river = new ArrayList<>();
-		this.river.add(38);
-		this.river.add(39);
-		this.river.add(40);
-		this.river.add(49);
-		this.river.add(50);
-		this.river.add(51);
-		this.river.add(52);
-		this.river.add(61);
-		this.river.add(73);
-		this.river.add(74);
-		this.river.add(75);
-		this.dec.removeIf(v -> v.equals(37));
-		for(int i = 0; i < 84; i++) this.dec.add(i);
-		this.dec.remove(37);
-		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
+        map = new CarcassonneMap(r, y, b, g);
+        statusMessage = "";
 
-		this.fetchNewTile();
+        initializeDeck();
 
-		addKeyListener(this);
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
-		addMouseListener(this);
-		
-		try {
-			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
-		}
-		catch(Exception E) {
-		    E.printStackTrace();
-		}
-	}
+        addKeyListener(this);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+        addMouseListener(this);
 
-	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g.setColor(brown);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(yellow);
-		g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
-		g.drawImage(logo, getWidth()*1610/1920, getHeight()*20/1080, (getWidth()-getWidth()*25/1920) - (getWidth()*1605/1920), (getHeight()*170/1080) - (getHeight()*20/1080), null);
-		
-		g.setColor(grey);
-		g.fillRect(getWidth()*1610/1920, getHeight()*890/1080, (getWidth()-getWidth()*20/1920)-(getWidth()*1610/1920), (getHeight()-getHeight()*20/1080)-(getHeight()*890/1080));
-		
-		g2.setStroke(new BasicStroke(6));
-		g.setColor(Color.black);
-		g.drawRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
-		g.drawRect(0, 0, getWidth(), getHeight());
-		
-		// board location: getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080
-		g.setColor(Color.black);
-		g.drawLine(getWidth()*1610/1920, getHeight()*20/1080, getWidth()*1610/1920, getHeight()-getHeight()*25/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*170/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*280/1080, getWidth()-getWidth()*25/1920, getHeight()*280/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*390/1080, getWidth()-getWidth()*25/1920, getHeight()*390/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*500/1080, getWidth()-getWidth()*25/1920, getHeight()*500/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
-		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
+        try {
+            logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
+        }
+        catch(Exception E) {
+            E.printStackTrace();
+        }
+    }
 
-		g.setColor(Color.black);
+    private void initializeDeck() {
+        // Set up river deck and normal deck
+        this.dec = new ArrayList<>();
+        this.river = new ArrayList<>();
+        this.river.add(38);
+        this.river.add(39);
+        this.river.add(40);
+        this.river.add(49);
+        this.river.add(50);
+        this.river.add(51);
+        this.river.add(52);
+        this.river.add(61);
+        this.river.add(73);
+        this.river.add(74);
+        this.river.add(75);
+        for(int i = 1; i <= 84; i++) this.dec.add(i);
+        for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
+        this.dec.removeIf(v -> v.equals(37));
+        this.fetchNewTile();
+    }
+
+    public void paint(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g.setColor(brown);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(yellow);
+        g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
+        g.drawImage(logo, getWidth()*1610/1920, getHeight()*20/1080, (getWidth()-getWidth()*25/1920) - (getWidth()*1605/1920), (getHeight()*170/1080) - (getHeight()*20/1080), null);
+
+        g.setColor(grey);
+        g.fillRect(getWidth()*1610/1920, getHeight()*890/1080, (getWidth()-getWidth()*20/1920)-(getWidth()*1610/1920), (getHeight()-getHeight()*20/1080)-(getHeight()*890/1080));
+
+        g2.setStroke(new BasicStroke(6));
+        g.setColor(Color.black);
+        g.drawRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
+        g.drawRect(0, 0, getWidth(), getHeight());
+
+        // board location: getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080
+        g.setColor(Color.black);
+        g.drawLine(getWidth()*1610/1920, getHeight()*20/1080, getWidth()*1610/1920, getHeight()-getHeight()*25/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*170/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*280/1080, getWidth()-getWidth()*25/1920, getHeight()*280/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*390/1080, getWidth()-getWidth()*25/1920, getHeight()*390/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*500/1080, getWidth()-getWidth()*25/1920, getHeight()*500/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
+        g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
+        g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
+
+        g.setColor(Color.black);
+
+        Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
+        g.setFont(f1);
+        g.setColor(Color.black);
+        g.drawString("Player 1: ", getWidth()*1620/1920, getHeight()*210/1080);
+        g.drawString("Score: ", getWidth()*1620/1920, getHeight()*250/1080);
+        g.drawString("Player 2: ", getWidth()*1620/1920, getHeight()*320/1080);
+        g.drawString("Score: ", getWidth()*1620/1920, getHeight()*360/1080);
+        g.drawString("Player 3: ", getWidth()*1620/1920, getHeight()*430/1080);
+        g.drawString("Score: ", getWidth()*1620/1920, getHeight()*470/1080);
+        g.drawString("Player 4: ", getWidth()*1620/1920, getHeight()*540/1080);
+        g.drawString("Score: ", getWidth()*1620/1920, getHeight()*580/1080);
+
+        Font f2 = new Font("Times New Roman", 0, getHeight()*35/1080);
+        g.setFont(f2);
+        g.drawString("Current Tile: ", getWidth()*1630/1920, getHeight()*660/1080);
+
+        Font f3 = new Font("Times New Roman", 0, getHeight()*25/1080);
+        g.setFont(f3);
+        g.drawString("Tiles Remaining: ", getWidth()*1625/1920, getHeight()*870/1080);
+
+        Font f4 = new Font("Times New Roman", 0, getHeight()*30/1080);
+        g.setFont(f4);
+        g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
+        g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
+
+        // Map
         this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
-		g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
+        g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
 
-		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
-		g.setFont(f1);
-		g.setColor(Color.black);
-		g.drawString("Player 1: ", getWidth()*1620/1920, getHeight()*210/1080);
-		g.drawString("Score: ", getWidth()*1620/1920, getHeight()*250/1080);
-		g.drawString("Player 2: ", getWidth()*1620/1920, getHeight()*320/1080);
-		g.drawString("Score: ", getWidth()*1620/1920, getHeight()*360/1080);
-		g.drawString("Player 3: ", getWidth()*1620/1920, getHeight()*430/1080);
-		g.drawString("Score: ", getWidth()*1620/1920, getHeight()*470/1080);
-		g.drawString("Player 4: ", getWidth()*1620/1920, getHeight()*540/1080);
-		g.drawString("Score: ", getWidth()*1620/1920, getHeight()*580/1080);
-		
-		Font f2 = new Font("Times New Roman", 0, getHeight()*35/1080);
-		g.setFont(f2);
-		g.drawString("Current Tile: ", getWidth()*1630/1920, getHeight()*660/1080);
+        // borderlines
+        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
+            //b.translate(getWidth()*20/1920, getHeight()*20/1080);
+            //g.drawRect(b.x(), b.y(), b.width(), b.height());
+        }
 
-		g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
+        // Status message
+        Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
+        g.setFont(f5);
+        g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
 
-		Font f3 = new Font("Times New Roman", 0, getHeight()*25/1080);
-		g.setFont(f3);
-		g.drawString("Tiles Remaining: ", getWidth()*1625/1920, getHeight()*870/1080);
-		
-		Font f4 = new Font("Times New Roman", 0, getHeight()*30/1080);
-		g.setFont(f4);
-		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
-		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
-	}
+        // tile preview
+        g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
 
-	public void nextRot() {
-	    this.curr_rot = this.curr_rot.next();
-	    this.curr_tile.rotate(this.curr_rot);
-	}
+        g.drawRect(tx-5,ty-5, 5, 5);
+    }
 
-	public void fetchNewTile() {
-	    int tileindx = 0;
-		if(!this.river.isEmpty()) {
-		    // 75 should be the last
-			while(tileindx == 0 || (tileindx == 75 && this.river.size() != 1))
-				tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
-		}
-		else
-			tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
+    public void nextRot() {
+        this.curr_rot = this.curr_rot.next();
+        this.curr_tile.rotate(this.curr_rot);
+    }
 
-		int ftileindx = tileindx;
-		System.out.println(ftileindx + " " + tileindx);
-		this.curr_tile = this.map.resources.getTiles().get(tileindx);
-		this.dec.removeIf(v -> v.equals(ftileindx));
-		this.river.removeIf(v -> v.equals(ftileindx));
+    public void fetchNewTile() {
 
-		this.curr_rot = Rotation.D0;
-	}
+        if (this.dec.isEmpty()) {
+            System.out.println("All cards in Dec is used, Gamed ended");
 
-	public void mouseClicked(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
+            // Do Ending sequence here.
+        }
 
-		for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-			b.translate(getWidth()*20/1920, getHeight()*20/1080);
-			if(b.contains(x, y)) {
-			    if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
-					System.out.println("added at " + b.tilex + " " + b.tiley);
-					fetchNewTile();
-				}
-			}
-		}
-    this.repaint();
-	}
+        int tileindx = 0;
+        if(!this.river.isEmpty()) {
+            // 75 should be the last
+            while(tileindx == 0 || (tileindx == 75 && this.river.size() != 1))
+                tileindx = this.river.get((int) (Math.random() * this.river.size() - 1));
+        }
+        else
+            tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void keyPressed(KeyEvent e) {
-	    switch(e.getKeyChar()) {
-			case 'r':
-			    this.nextRot();
-		}
+        int ftileindx = tileindx;
+        //this.curr_tile = this.map.resources.getTiles().get(tileindx);
+        this.curr_tile = this.map.resources.getTiles().get(66);
+        this.dec.removeIf(v -> v.equals(ftileindx));
+        this.river.removeIf(v -> v.equals(ftileindx));
 
-		System.out.println(this.curr_rot);
+        this.curr_rot = Rotation.D0;
+    }
 
-		this.repaint();
-	}
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-	}
+        tx = x;
+        ty = y;
+
+        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
+            b.translate(getWidth()*20/1920, getHeight()*20/1080);
+            if(b.contains(x, y)) {
+                if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
+                    System.out.println("added at " + b.tilex + " " + b.tiley);
+                    fetchNewTile();
+                    this.statusMessage = "";
+                } else {
+                    // TODO Message this
+                    this.statusMessage = "Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
+                    System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
+                }
+            }
+        }
+        this.repaint();
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void mouseReleased(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyChar()) {
+            case 'r':
+                this.nextRot();
+        }
+
+        this.repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+        // TODO Auto-generated method stub
+    }
 }
-

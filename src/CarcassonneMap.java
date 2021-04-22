@@ -57,8 +57,8 @@ public class CarcassonneMap {
   		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
 		// 0, 0 is left, top
-        this.map = new CarcassonneTile[85][85];
-        this.tryAddAt(resources.getTiles().get(37), 43, 43);
+		this.map = new CarcassonneTile[161][161];
+		this.tryAddAt(resources.getTiles().get(37), 81, 81);
     }
 
 
@@ -73,11 +73,6 @@ public class CarcassonneMap {
 		if(this.map[x][y+1] != null && !this.map[x][y+1].fit(t, Orient.N)) ret.add(Orient.S); // down
 		if(this.map[x-1][y] != null && !this.map[x-1][y].fit(t, Orient.E)) ret.add(Orient.W); // left
         if(this.map[x+1][y] != null && !this.map[x+1][y].fit(t, Orient.W)) ret.add(Orient.E); // right
-
-        // TODO fix
-        System.out.println(t);
-		System.out.println(this.map[x+1][y]);
-		System.out.println(this.map[x][y+1]);
 
 		return ret;
     }
@@ -195,57 +190,58 @@ public class CarcassonneMap {
 		}
 	}
 	public Boundary getBoundary() {
-        // x min
-        int xmin = 43;
-        for(int i = 43; i >= 0; i--) {
-            boolean tile = false;
-            for(int j = 0; j < 85; j++)
-                if(this.map[i][j] != null) {
-                    tile = true;
-                    break;
-                }
-            if(!tile) break;
-            xmin = i;
-        }
-        // x max
-        int xmax = 43;
-        for(int i = 43; i < 85; i++) {
-            boolean tile = false;
-            for(int j = 0; j < 85; j++)
-                if (this.map[i][j] != null) {
-                    tile = true;
-                    break;
-                }
-            if(!tile) break;
-            xmax = i;
-        }
-        // y min
-        int ymin = 43;
-        for(int i = 43; i >= 0; i--) {
-            boolean tile = false;
-            for(int j = 0; j < 85; j++)
-                if(this.map[j][i] != null) {
-                    tile = true;
-                    break;
-                }
-            if(!tile) break;
-            ymin = i;
-        }
-        // y max
-        int ymax = 43;
-        for(int i = 43; i < 85; i++) {
-            boolean tile = false;
-            for(int j = 0; j < 85; j++)
-                if(this.map[j][i] != null) {
-                    tile = true;
-                    break;
-                }
-            if(!tile) break;
-            ymax = i;
-        }
-        return new Boundary(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
-    }
-
+		int mid = 81;
+		int max = 160;
+		// x min
+		int xmin = mid;
+		for(int i = mid; i >= 0; i--) {
+			boolean tile = false;
+			for(int j = 0; j < max; j++)
+				if(this.map[i][j] != null) {
+					tile = true;
+					break;
+				}
+			if(!tile) break;
+			xmin = i;
+		}
+		// x max
+		int xmax = mid;
+		for(int i = mid; i < max; i++) {
+			boolean tile = false;
+			for(int j = 0; j < max; j++)
+				if (this.map[i][j] != null) {
+					tile = true;
+					break;
+				}
+			if(!tile) break;
+			xmax = i;
+		}
+		// y min
+		int ymin = mid;
+		for(int i = mid; i >= 0; i--) {
+			boolean tile = false;
+			for(int j = 0; j < max; j++)
+				if(this.map[j][i] != null) {
+					tile = true;
+					break;
+				}
+			if(!tile) break;
+			ymin = i;
+		}
+		// y max
+		int ymax = mid;
+		for(int i = mid; i < max; i++) {
+			boolean tile = false;
+			for(int j = 0; j < max; j++)
+				if(this.map[j][i] != null) {
+					tile = true;
+					break;
+				}
+			if(!tile) break;
+			ymax = i;
+		}
+		return new Boundary(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
+	}
     class GameBoardGraphics {
         BufferedImage img;
         ArrayList<Boundary> boundaries;
@@ -283,7 +279,6 @@ public class CarcassonneMap {
 		// tw = h/height
 		if ((width) * tile_size > w) tile_size = w/(width);
 		if ((height) * tile_size > h) tile_size = h/(height);
-		System.out.println(h + tile_size + " " + ((height) * tile_size));
 
 		BufferedImage mapimg = new BufferedImage(width * tile_size, height * tile_size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = mapimg.createGraphics();
