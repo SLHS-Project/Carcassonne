@@ -28,10 +28,11 @@ public class CarcassonneMap {
     public Resources resources;
   	private CarcassonneTile[][] map;
   	private TreeMap<CarcassonneTile, Point> Map;
-  	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
-  	private TreeMap<ArrayList<Integer>, String> farmlands;
-  	private TreeMap<Boolean, ArrayList<CarcassonneTile>> roads;  //decide if to use this or not, keeps track of all roads completed and incomplete //makes scoring much easier
-  	private ArrayList<CarcassonneTile> completedTiles; //temporary storing
+  	private ArrayList<ArrayList<CarcassonneTile>> cities;
+  	private ArrayList<Boolean> citiesVal;
+  	private ArrayList<ArrayList<CarcassonneTile>> farmlands;
+  	private ArrayList<ArrayList<CarcassonneTile>> roads;  //decide if to use this or not, keeps track of all roads completed and incomplete //makes scoring much easier
+  	private ArrayList<Boolean> roadsVal;
   	private CarcassonnePlayer red, yellow, blue, green;
   	private final int WIDTH=1600;
   	private final int HEIGHT=760;
@@ -45,11 +46,13 @@ public class CarcassonneMap {
   		green=g;
   		
   		Map=new TreeMap<>();
-  		cities=new TreeMap<>();
-  		farmlands=new TreeMap<>();
+  		cities=new ArrayList<>();
+  		farmlands=new ArrayList<>();
+  		roads=new ArrayList<>();
+  		citiesVal=new ArrayList<>();
+  		roadsVal=new ArrayList<>();
   		
   		tileSize=HEIGHT/4;
-  		completedTiles=new ArrayList<>();
 
   		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
@@ -325,7 +328,6 @@ public class CarcassonneMap {
   		
   		return s;
   	}
-  	
   	private boolean completeRD (CarcassonneTile tile)
   	{
   		
@@ -367,19 +369,17 @@ public class CarcassonneMap {
   				{
   						list=contains(tempTile, "RD");
   						list.add(tile); //add the new tile to the arraylist in roads
-  					//if the road has two exists, then it did not end a road
-  		  			if(rd.length==2)
-  		  				return false; 
-  		  		
   		  			
   		  			for(CarcassonneTile t: list)
   		  			{
   		  					if(t.checkRdDirections()==1 || t.isCR())
   		  					{
-  		  						for(Boolean b: roads.keySet()) {
-  		  							if(roads.get(b).equals(list)) {
-  		  								roads.put(true, list);
-  		  								roads.remove(false, list);
+  		  						for(int i=0; i<roads.size(); i++)
+  		  						{
+  		  							ArrayList<CarcassonneTile> tiles=roads.get(i);
+  		  							if(tiles.equals(list))
+  		  							{
+  		  								roadsVal.set(i, true);
   		  								return true;
   		  							}
   		  						}
@@ -387,94 +387,50 @@ public class CarcassonneMap {
   		  			}	
   				}
   		}
-  		return false;
-  		/*	
-  		Point tempPt;
-  		Point loc=Map.get(tile);
-  		String lineD="";
-  		//if the ending tile ends the road with a city or monastery or etc.
-  		for(String str: rd) {
-  			if(rd[0].equals("N")) {
-  				tempPt=new Point((int)loc.getX(), (int)loc.getY()-tileSize);
-  				lineD="S";}
-  			else if(rd[0].equals("W")) {
-  				tempPt=new Point((int)loc.getX()-tileSize, (int)loc.getY());
-  				lineD="E";}
-  			else if(rd[0].equals("S")) {
-  				tempPt=new Point((int)loc.getX(), (int)loc.getY()+tileSize);
-  				lineD="W";}
-  			else {
-  				tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
-  				lineD="N";}
-  			
-  			CarcassonneTile tile1=findTile(tempPt);
-  			if(tile1!=null) {
-  				completedTiles.add(tile);
-  				completeRd(findTile(tempPt), lineD);
-  			}
-  			if(completedTiles.size()<2)
-  				return false;
-  			return true;
-  		}
-  		System.out.println("Some error with completeRd function");
-  		return false;*/
-  	}
-  	/*private void completeRd(CarcassonneTile tile, String lineD)
-  	{
-  		Side[] s = tile.getSides();
-  		String temp="";
-  		Point loc=Map.get(tile);
-  		completedTiles.add(tile);
   		
-  		for(int i=0; i<s.length; i++)
+  		//if the road on tile has two ends & finishes a road, then in roads there should be two arraylist containing this tile
+  		if(rd.length==2)
   		{
-  			String[] ts=s[i].getSideStr();
-  			if(ts[1].equalsIgnoreCase("Rd")) {
-  				if(i==0)
-  					temp+="N ";
-  				else if(i==1)
-  					temp+="W ";
-  				else if(i==2)
-  					temp+="S ";
-  				else
-  					temp+="E";
+  			ArrayList<CarcassonneTile> list1=new ArrayList<>();
+  			ArrayList<CarcassonneTile> list2=new ArrayList<>();
+  			int index1=0;
+  			int index2=0;
+  			for(ArrayList<CarcassonneTile> tempList: roads)
+  			{
+  				if(tempList.contains(tile) && list1.size()==0)
+  					list1=tempList;
+  				else if(tempList.contains(tile)) {
+  					list2=tempList;
+  					break;
+  				}	
+  				else 
+  					index1++;
+  				index2++;
+  			}
+  			if(list1==null || list2==null)
+  				return false;
+  			list2.remove(tile);
+  			list1.addAll(list2);
+  			roads.remove(list2);
+  			roadsVal.remove(index2);
+  			int cnt=0;
+  			for(CarcassonneTile t: list1)
+  			{
+  				if(t.isCR() || t.checkRdDirections()==1)
+  					cnt++;
+  			}
+  			if(cnt==2)
+  			{
+  				roadsVal.set(index1, true);
+  				return true;
   			}
   		}
-  		//consists of the direction of the road: "N W"
-  		String[] rd=temp.split(" ");
+  		return false;
   		
-  		//first check if this tile is where the road ends
-  		if (rd.length==1 || tile.isCR())
-  			return ;
-  		
-  		//the road continues
-  		
-  		//find the location of the tile the road leads to
-  		Point tempPt;
-  		int i=0;
-  		if(rd[0].equals(lineD.substring(lineD.length()-1)))
-  			i=1;
-  		if(rd[i].equals("N")) {
-  			tempPt=new Point((int)loc.getX(), (int)loc.getY()-tileSize);
-  			lineD+="S";
-  		}
-  		else if(rd[i].equals("W")) {
-  			tempPt=new Point((int)loc.getX()-tileSize, (int)loc.getY());
-  			lineD+="E";}
-  		else if(rd[i].equals("S")) {
-  			tempPt=new Point((int)loc.getX(), (int)loc.getY()+tileSize);
-  			lineD+="N";}
-  		else {
-  			tempPt=new Point((int)loc.getX()+tileSize, (int)loc.getY());
-  			lineD+="W";}
-  			
-  		CarcassonneTile tile1=findTile(tempPt);
-  		//if no tile exist, the road is not complete, erase all items in the arraylist
-  		if(tile1==null)
-  			completedTiles.clear();
-  		completeRd(tile1, lineD);
-  	}*/
+  	}
+  				
   	
+  	//DO THIS!
   	private boolean completeC (CarcassonneTile tile)
   	{
   		Side[] s = tile.getSides();
@@ -495,9 +451,76 @@ public class CarcassonneMap {
   		}
   		//consists of the direction of the road: "N W"
   		String[] c=temp.split(" ");
-  		
+  		ArrayList<CarcassonneTile> cityTiles=new ArrayList<>();
+  		for(int i=0; i<c.length; i++)
+  		{
+  				String direction=c[i];
+  				Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				if(i==0)
+  					cityTiles=contains(tempTile, "C");
+  				else
+  				{
+  					ArrayList<CarcassonneTile> newCityTiles=contains(tempTile, "C");
+  					//if the two arraylist doesn't equal
+  					if(!cityTiles.equals(newCityTiles)) {
+  						cityTiles.addAll(newCityTiles);
+  						cityTiles.add(tile);
+  						citiesVal.remove(cities.indexOf(newCityTiles));
+  						cities.remove(newCityTiles);
+  					}
+  				}
+  				
   		//change the value of the key in "cities" to true once completed
   		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
+  		}
+  		cityTiles=contains(tile, "C");
+  		for(CarcassonneTile t: cityTiles)
+  		{
+  			s = t.getSides();
+    		temp="";
+    		for(int i=0; i<s.length; i++)
+    		{
+    			TerrainType[] ts=s[i].getSide();
+    			if(ts[1].City!=null) {
+    				if(i==0)
+    					temp+="N ";
+    				else if(i==1)
+    					temp+="W ";
+    				else if(i==2)
+    					temp+="S ";
+    				else
+    					temp+="E";
+    			}
+    		}
+    		c=temp.split(" ");
+    		for(String direction: c)
+    		{
+    			Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				if (!tempTile.hasCity())
+  					return false;
+    		}
+  		}
+  		citiesVal.set(cities.indexOf(cityTiles), true);
   		return true;
   	}
   	//receive the just placed tile, return the center monastery tile if completed, else return null
@@ -549,15 +572,16 @@ public class CarcassonneMap {
   		
   		//tileCodes have all the tiles that the completed road is on
   		//check for meeples
-  		String players=meepleCompare(contains(tile, "RD"), "Thief");
-  		scoreCalc(players, 1, completedTiles.size());
+  		ArrayList<CarcassonneTile> temp=contains(tile, "RD");
+  		String players=meepleCompare(temp, "Thief");
+  		scoreCalc(players, 1, temp.size());
   	}
   	
   	//assume the just-placed tile completed a city, do score calculation
   	public void cityScoring(CarcassonneTile tile)
   	{
   		ArrayList<CarcassonneTile> C2Score=new ArrayList<>();
-  		for(ArrayList<CarcassonneTile> a: cities.values()) {
+  		for(ArrayList<CarcassonneTile> a: cities) {
   			if(a.contains(tile.getCode())) {
   				C2Score=a;
   				break;
@@ -595,13 +619,15 @@ public class CarcassonneMap {
   		finalCityScoring();
   		finalMonasteryScoring();
   		finalRoadScoring();
+  		farmlandScoring();
   	}
   	public void finalCityScoring()
   	{
-  		for(Boolean boo: cities.keySet()) {
-  			ArrayList<CarcassonneTile> list=cities.get(boo);
-  			//if city incomplete
-  			if(!boo) {
+  		for(int i=0; i<cities.size(); i++)
+  		{
+  			ArrayList<CarcassonneTile> list=cities.get(i);
+  		//if city incomplete
+  			if(!citiesVal.get(i)) {
   				int shields=shieldNum(list);
   				String owners=meepleCompare(list, "Knight");
   				String[] names=owners.split(" ");
@@ -643,10 +669,10 @@ public class CarcassonneMap {
   	
   	public void finalRoadScoring()
   	{
-  		for(Boolean boo: roads.keySet()) {
-  			ArrayList<CarcassonneTile> list=roads.get(boo);
+  		for(int i=0; i<roads.size(); i++) {
+  			ArrayList<CarcassonneTile> list=roads.get(i);
   			//if road incomplete
-  			if(!boo) {
+  			if(!roadsVal.get(i)) {
   				String owners=meepleCompare(list, "Thief");
   				String[] names=owners.split(" ");
   				for(String s: names) {
@@ -654,6 +680,43 @@ public class CarcassonneMap {
   				}
   			}
   		}
+  	}
+  	
+  	public void farmlandScoring()
+  	{
+  		ArrayList<Integer> cityIndex=new ArrayList<>();
+  		for(ArrayList<CarcassonneTile> farmland: farmlands)
+  		{
+  				for(CarcassonneTile tile: farmland)
+  				{
+  						int index=citiesContains(tile);
+  						//if this tile is a city tile && the city is complete
+  						if(index>=0 && citiesVal.get(index) && !cityIndex.contains(index))					
+  							cityIndex.add(index);
+  						
+  				}
+  				String player=meepleCompare(farmland, "farmer");
+  				String[] players=player.split(" ");
+  				for(String s: players)
+  				{
+  					callPlayer(s).addScore(cityIndex.size()*3);
+  				}
+  				cityIndex.clear();
+  		}
+  	}
+  	
+  	private int citiesContains(CarcassonneTile tile)
+  	{
+  		for(int i=0; i<cities.size(); i++)
+  		{
+  			ArrayList<CarcassonneTile> city=cities.get(i);
+  			for (CarcassonneTile cityTile: city)
+  			{
+  					if (cityTile.getCode()==tile.getCode())
+  						return i;
+  			}
+  		}	
+  		return -1;
   	}
   	
   	private int shieldNum(ArrayList<CarcassonneTile> tiles)
@@ -731,7 +794,7 @@ public class CarcassonneMap {
   	{
   			if(type.equals("RD"))
   			{
-  				for(ArrayList<CarcassonneTile> list: roads.values()) {
+  				for(ArrayList<CarcassonneTile> list: roads) {
   					for(CarcassonneTile t: list)
   					{
   						if(t.getCode()==tile.getCode())
@@ -743,7 +806,7 @@ public class CarcassonneMap {
   			
   			if(type.equals("C"))
   			{
-  				for(ArrayList<CarcassonneTile> list: cities.values()) {
+  				for(ArrayList<CarcassonneTile> list: cities) {
   					for(CarcassonneTile t: list)
   					{
   						if(t.getCode()==tile.getCode())
