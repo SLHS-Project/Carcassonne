@@ -29,10 +29,11 @@ public class CarcassonneMap {
     public Resources resources;
   	private CarcassonneTile[][] map;
   	private TreeMap<CarcassonneTile, Point> Map;
-  	private TreeMap<ArrayList<CarcassonneTile>, Boolean> cities;
-  	private TreeMap<ArrayList<Integer>, String> farmlands;
-  	private TreeMap<Boolean, ArrayList<CarcassonneTile>> roads;  //decide if to use this or not, keeps track of all roads completed and incomplete //makes scoring much easier
-  	private ArrayList<CarcassonneTile> completedTiles; //temporary storing
+  	private ArrayList<ArrayList<CarcassonneTile>> cities;
+  	private ArrayList<Boolean> citiesVal;
+  	private ArrayList<ArrayList<CarcassonneTile>> farmlands;
+  	private ArrayList<ArrayList<CarcassonneTile>> roads;  //decide if to use this or not, keeps track of all roads completed and incomplete //makes scoring much easier
+  	private ArrayList<Boolean> roadsVal;
   	private CarcassonnePlayer red, yellow, blue, green;
   	private final int WIDTH=1600;
   	private final int HEIGHT=760;
@@ -46,11 +47,13 @@ public class CarcassonneMap {
   		green=g;
   		
   		Map=new TreeMap<>();
-  		cities=new TreeMap<>();
-  		farmlands=new TreeMap<>();
+  		cities=new ArrayList<>();
+  		farmlands=new ArrayList<>();
+  		roads=new ArrayList<>();
+  		citiesVal=new ArrayList<>();
+  		roadsVal=new ArrayList<>();
   		
   		tileSize=HEIGHT/4;
-  		completedTiles=new ArrayList<>();
 
   		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
@@ -309,6 +312,10 @@ public class CarcassonneMap {
         return new GameBoardGraphics(r, imgBoundPoss);
 	}
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 //  //checks if any feature is completed
 //  	public String complete (CarcassonneTile tile)
 //  	{
@@ -752,6 +759,514 @@ public class CarcassonneMap {
 //  			return null;
 //  	}
 
+<<<<<<< Updated upstream
+=======
+=======
+  //checks if any feature is completed
+  	public String complete (CarcassonneTile tile)
+  	{
+  		String s="";
+  		if(completeRD(tile))
+  			s+="RD ";
+  		if(completeC(tile))
+  			s+="C ";
+  		if(completeM(tile)!=null)
+  			s+="M";
+  		
+  		return s;
+  	}
+  	private boolean completeRD (CarcassonneTile tile)
+  	{
+  		
+  		Side[] s = tile.getSides();
+  		String temp="";
+  		for(int i=0; i<s.length; i++)
+  		{
+  			TerrainType[] ts=s[i].getSide();
+  			if(ts[1].Road!=null) {
+  				if(i==0)
+  					temp+="N ";
+  				else if(i==1)
+  					temp+="W ";
+  				else if(i==2)
+  					temp+="S ";
+  				else
+  					temp+="E";
+  			}
+  		}
+  		//consists of the direction of the road: "N W"
+  		String[] rd=temp.split(" ");
+  			
+  		ArrayList<CarcassonneTile> list=new ArrayList<>();
+  		for(String direction: rd)
+  		{
+  				Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				//if the tile exist and has road 
+  				if(tempTile!=null && tempTile.checkRdDirections()>0)
+  				{
+  						list=contains(tempTile, "RD");
+  						list.add(tile); //add the new tile to the arraylist in roads
+  		  			
+  		  			for(CarcassonneTile t: list)
+  		  			{
+  		  					if(t.checkRdDirections()==1 || t.isCR())
+  		  					{
+  		  						for(int i=0; i<roads.size(); i++)
+  		  						{
+  		  							ArrayList<CarcassonneTile> tiles=roads.get(i);
+  		  							if(tiles.equals(list))
+  		  							{
+  		  								roadsVal.set(i, true);
+  		  								return true;
+  		  							}
+  		  						}
+  		  					}
+  		  			}	
+  				}
+  		}
+  		
+  		//if the road on tile has two ends & finishes a road, then in roads there should be two arraylist containing this tile
+  		if(rd.length==2)
+  		{
+  			ArrayList<CarcassonneTile> list1=new ArrayList<>();
+  			ArrayList<CarcassonneTile> list2=new ArrayList<>();
+  			int index1=0;
+  			int index2=0;
+  			for(ArrayList<CarcassonneTile> tempList: roads)
+  			{
+  				if(tempList.contains(tile) && list1.size()==0)
+  					list1=tempList;
+  				else if(tempList.contains(tile)) {
+  					list2=tempList;
+  					break;
+  				}	
+  				else 
+  					index1++;
+  				index2++;
+  			}
+  			if(list1==null || list2==null)
+  				return false;
+  			list2.remove(tile);
+  			list1.addAll(list2);
+  			roads.remove(list2);
+  			roadsVal.remove(index2);
+  			int cnt=0;
+  			for(CarcassonneTile t: list1)
+  			{
+  				if(t.isCR() || t.checkRdDirections()==1)
+  					cnt++;
+  			}
+  			if(cnt==2)
+  			{
+  				roadsVal.set(index1, true);
+  				return true;
+  			}
+  		}
+  		return false;
+  		
+  	}
+  				
+  	
+  	//DO THIS!
+  	private boolean completeC (CarcassonneTile tile)
+  	{
+  		Side[] s = tile.getSides();
+  		String temp="";
+  		for(int i=0; i<s.length; i++)
+  		{
+  			TerrainType[] ts=s[i].getSide();
+  			if(ts[1].City!=null) {
+  				if(i==0)
+  					temp+="N ";
+  				else if(i==1)
+  					temp+="W ";
+  				else if(i==2)
+  					temp+="S ";
+  				else
+  					temp+="E";
+  			}
+  		}
+  		//consists of the direction of the road: "N W"
+  		String[] c=temp.split(" ");
+  		ArrayList<CarcassonneTile> cityTiles=new ArrayList<>();
+  		for(int i=0; i<c.length; i++)
+  		{
+  				String direction=c[i];
+  				Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				if(i==0)
+  					cityTiles=contains(tempTile, "C");
+  				else
+  				{
+  					ArrayList<CarcassonneTile> newCityTiles=contains(tempTile, "C");
+  					//if the two arraylist doesn't equal
+  					if(!cityTiles.equals(newCityTiles)) {
+  						cityTiles.addAll(newCityTiles);
+  						cityTiles.add(tile);
+  						citiesVal.remove(cities.indexOf(newCityTiles));
+  						cities.remove(newCityTiles);
+  					}
+  				}
+  				
+  		//change the value of the key in "cities" to true once completed
+  		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
+  		}
+  		cityTiles=contains(tile, "C");
+  		for(CarcassonneTile t: cityTiles)
+  		{
+  			s = t.getSides();
+    		temp="";
+    		for(int i=0; i<s.length; i++)
+    		{
+    			TerrainType[] ts=s[i].getSide();
+    			if(ts[1].City!=null) {
+    				if(i==0)
+    					temp+="N ";
+    				else if(i==1)
+    					temp+="W ";
+    				else if(i==2)
+    					temp+="S ";
+    				else
+    					temp+="E";
+    			}
+    		}
+    		c=temp.split(" ");
+    		for(String direction: c)
+    		{
+    			Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else if(direction.equals("E"))
+  					pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				CarcassonneTile tempTile=findTile(pt);
+  				if (!tempTile.hasCity())
+  					return false;
+    		}
+  		}
+  		citiesVal.set(cities.indexOf(cityTiles), true);
+  		return true;
+  	}
+  	//receive the just placed tile, return the center monastery tile if completed, else return null
+  	private CarcassonneTile completeM (CarcassonneTile tile)
+  	{
+  		Point loc=Map.get(tile);
+  		CarcassonneTile MTile=null;
+  		
+  		int x=-tileSize;
+  		int y=-tileSize;
+  		for(int i=0; i<9; i++) {
+  			Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+  			CarcassonneTile t= findTile(newLoc);
+  			if(t!=null) {
+  				if(t.isMonastery())
+  					MTile=t;
+  			}
+  			if(MTile!=null)
+  				break;
+  			
+  			if(x!=tileSize)
+  				x+=tileSize;
+  			else
+  				y+=tileSize;
+  		}
+  		
+  		x=-tileSize;
+  		y=-tileSize;
+  		if(MTile!=null){
+  			loc=Map.get(MTile);
+  			for(int i=0; i<9; i++) {
+    			Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+    			CarcassonneTile t= findTile(newLoc);
+    			if(t==null)
+    				return null;
+    				
+    			if(x!=tileSize)
+      			x+=tileSize;
+      		else
+      			y+=tileSize;}
+  		}
+  		
+  		return MTile;
+  	}
+  	
+  	//assume the just-placed tile completed a road, do score calculation
+  	public void roadScoring(CarcassonneTile tile, Point loc)
+  	{
+  		
+  		//tileCodes have all the tiles that the completed road is on
+  		//check for meeples
+  		ArrayList<CarcassonneTile> temp=contains(tile, "RD");
+  		String players=meepleCompare(temp, "Thief");
+  		scoreCalc(players, 1, temp.size());
+  	}
+  	
+  	//assume the just-placed tile completed a city, do score calculation
+  	public void cityScoring(CarcassonneTile tile)
+  	{
+  		ArrayList<CarcassonneTile> C2Score=new ArrayList<>();
+  		for(ArrayList<CarcassonneTile> a: cities) {
+  			if(a.contains(tile.getCode())) {
+  				C2Score=a;
+  				break;
+  			}
+  				
+  		}
+  		
+  		String owners=meepleCompare(C2Score, "Knight");
+  		if (owners.length()<2)
+  			return;
+  		
+  		int shieldNum=shieldNum(C2Score);
+  		int score=2*C2Score.size()+2*shieldNum;
+  		
+  		String[] p=owners.split(" ");
+  		for(String s: p) {
+  			callPlayer(s).addScore(score);
+  		}
+  	}
+
+  	//assume the just-placed tile completed a monastery, do score calculation
+  	//MTile is the tile with the monastery on it, this will be done via completeM
+  	public void monasteryScoring(CarcassonneTile MTile, Point loc)
+  	{
+  		String name="";
+  		Meeple mp=MTile.getMeeple();
+  		if(mp!=null)
+  			name=mp.getColor();
+  		callPlayer(name).addScore(9);
+  	}
+  	
+  	//end of game scoring
+  	public void endOfGameScoring()
+  	{
+  		finalCityScoring();
+  		finalMonasteryScoring();
+  		finalRoadScoring();
+  		farmlandScoring();
+  	}
+  	public void finalCityScoring()
+  	{
+  		for(int i=0; i<cities.size(); i++)
+  		{
+  			ArrayList<CarcassonneTile> list=cities.get(i);
+  		//if city incomplete
+  			if(!citiesVal.get(i)) {
+  				int shields=shieldNum(list);
+  				String owners=meepleCompare(list, "Knight");
+  				String[] names=owners.split(" ");
+  				for(String s: names) {
+  					callPlayer(s).addScore(list.size()+shields);
+  				}
+  			}
+  		}
+  	}
+  	
+  	public void finalMonasteryScoring()
+  	{
+  			for(CarcassonneTile tile: Map.keySet()) {
+  				if(tile.isMonastery()) {
+  					Meeple mp=tile.getMeeple();
+  					if(mp!=null) {
+  						Point loc=Map.get(tile);
+  						int totalTiles=0;
+  						int x=-tileSize;
+  						int y=-tileSize;
+  						for(int i=0; i<9; i++) {
+  								Point newLoc=new Point((int)loc.getX()+x, (int)loc.getY()+y);
+  								CarcassonneTile t= findTile(newLoc);
+  								if(t!=null) {
+  									totalTiles++;
+  								}
+  								if(x!=tileSize)
+  									x+=tileSize;
+  								else
+  									y+=tileSize;
+  						}
+  						
+  						callPlayer(mp.getColor()).addScore(totalTiles);
+  					}
+  		  		
+  				}
+  			}
+  	}
+  	
+  	public void finalRoadScoring()
+  	{
+  		for(int i=0; i<roads.size(); i++) {
+  			ArrayList<CarcassonneTile> list=roads.get(i);
+  			//if road incomplete
+  			if(!roadsVal.get(i)) {
+  				String owners=meepleCompare(list, "Thief");
+  				String[] names=owners.split(" ");
+  				for(String s: names) {
+  					callPlayer(s).addScore(list.size());
+  				}
+  			}
+  		}
+  	}
+  	
+  	public void farmlandScoring()
+  	{
+  		ArrayList<Integer> cityIndex=new ArrayList<>();
+  		for(ArrayList<CarcassonneTile> farmland: farmlands)
+  		{
+  				for(CarcassonneTile tile: farmland)
+  				{
+  						int index=citiesContains(tile);
+  						//if this tile is a city tile && the city is complete
+  						if(index>=0 && citiesVal.get(index) && !cityIndex.contains(index))					
+  							cityIndex.add(index);
+  						
+  				}
+  				String player=meepleCompare(farmland, "farmer");
+  				String[] players=player.split(" ");
+  				for(String s: players)
+  				{
+  					callPlayer(s).addScore(cityIndex.size()*3);
+  				}
+  				cityIndex.clear();
+  		}
+  	}
+  	
+  	private int citiesContains(CarcassonneTile tile)
+  	{
+  		for(int i=0; i<cities.size(); i++)
+  		{
+  			ArrayList<CarcassonneTile> city=cities.get(i);
+  			for (CarcassonneTile cityTile: city)
+  			{
+  					if (cityTile.getCode()==tile.getCode())
+  						return i;
+  			}
+  		}	
+  		return -1;
+  	}
+  	
+  	private int shieldNum(ArrayList<CarcassonneTile> tiles)
+  	{
+  		int num=0;
+  		for(CarcassonneTile t: tiles) {
+  			if(t.hasShield())
+  				num++;
+  		}
+  		return num;
+  	}
+  	
+  	private CarcassonneTile findTile(Point pt)
+  	{
+  		for(CarcassonneTile t: Map.keySet()) {
+  			if(Map.get(t).equals(pt))
+  				return t;
+  		}
+  		System.out.println("Didn't find the tile at this location "+pt);
+  		return null;
+  	}
+  	
+  	private String meepleCompare(ArrayList<CarcassonneTile> tiles, String type)
+  	{
+  		TreeMap<String, Integer> players=new TreeMap<>();
+  		for(CarcassonneTile t: tiles)
+  		{
+  			Meeple meeple=t.getMeeple();
+  			if(meeple!=null) {
+  				if (meeple.getType().equalsIgnoreCase(type))
+  				{
+  					String owner=meeple.getColor();
+  					//add the owner of meeple to the treemap, but check if it exist first
+  					if(players.containsKey(owner))
+  						players.replace(owner, players.get(owner)+1);
+  					else
+  						players.put(owner, 1);
+  				}
+  			}
+  		}
+  		String line="";
+  		int i=0;
+  		for(String key: players.keySet()) {
+  			if(players.get(key)>i)
+  				line=key+" ";
+  			else if(players.get(key)==i)
+  				line+=key+" ";
+  		}
+  		return line;
+  	}
+  	//add the score to the player(s)    //spt = score per tile
+  	private void scoreCalc(String players, int spt, int tileCnt)
+  	{
+  		String[] p=players.split(" ");
+  		for(String s: p) {
+  			callPlayer(s).addScore(spt*tileCnt);
+  		}
+  	}
+  	
+  	private CarcassonnePlayer callPlayer(String name)
+  	{
+  		if(name.equals("red"))
+  			return red;
+  		else if(name.equals("yellow"))
+  			return yellow;
+  		else if(name.equals("blue"))
+  			return blue;
+  		else if(name.equals("green"))
+  			return green;
+  		System.out.println("DID NOT FIND A PLAYER WITH NAME "+name);
+  		return null;
+  	}
+  	
+  	private ArrayList<CarcassonneTile> contains(CarcassonneTile tile, String type)
+  	{
+  			if(type.equals("RD"))
+  			{
+  				for(ArrayList<CarcassonneTile> list: roads) {
+  					for(CarcassonneTile t: list)
+  					{
+  						if(t.getCode()==tile.getCode())
+  							return list;
+  					}
+  				}
+  				System.out.println("error, did not find tile in treemap roads");
+  			}
+  			
+  			if(type.equals("C"))
+  			{
+  				for(ArrayList<CarcassonneTile> list: cities) {
+  					for(CarcassonneTile t: list)
+  					{
+  						if(t.getCode()==tile.getCode())
+  							return list;
+  					}
+  				}
+  				System.out.println("error, did not find tile in treemap cities");
+  			}
+  			return null;
+  	}
+    
+>>>>>>> 73faca7cf46ec60f03d641449357ee55dabc8ed0
+>>>>>>> Stashed changes
   	
     public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
