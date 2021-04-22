@@ -20,6 +20,7 @@ import tile.Rotation;
 import tile.CarcassonneTile;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
+	private String statusMessage;
 	private CarcassonneMap.GameBoardGraphics gbg;
 	private Rotation curr_rot;
 	private ArrayList<Integer> river;
@@ -32,15 +33,33 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	private CarcassonnePlayer r, y, b, g;
 	private CarcassonneMap map;
 
+
 	public CarcassonnePanel() throws IOException {
 		r=new CarcassonnePlayer("red");
 		y=new CarcassonnePlayer("yellow");
 		b=new CarcassonnePlayer("blue");
 		g=new CarcassonnePlayer("green");
 
-
 		map = new CarcassonneMap(r, y, b, g);
+		statusMessage = "";
 
+		initializeDeck();
+
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+		addMouseListener(this);
+		
+		try {
+			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
+		}
+		catch(Exception E) {
+		    E.printStackTrace();
+		}
+	}
+
+	private void initializeDeck() {
+	    // Set up river deck and normal deck
 		this.dec = new ArrayList<>();
 		this.river = new ArrayList<>();
 		this.river.add(38);
@@ -54,24 +73,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		this.river.add(73);
 		this.river.add(74);
 		this.river.add(75);
-		this.dec.removeIf(v -> v.equals(37));
-		for(int i = 0; i < 84; i++) this.dec.add(i);
-		this.dec.remove(37);
+		for(int i = 1; i <= 84; i++) this.dec.add(i);
 		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
-
+		this.dec.removeIf(v -> v.equals(37));
 		this.fetchNewTile();
-
-		addKeyListener(this);
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
-		addMouseListener(this);
-		
-		try {
-			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
-		}
-		catch(Exception E) {
-		    E.printStackTrace();
-		}
 	}
 
 	public void paint(Graphics g) {
@@ -103,8 +108,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
 
 		g.setColor(Color.black);
-        this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
-		g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
 
 		Font f1 = new Font("Times New Roman", 0, getHeight()*20/1080);
 		g.setFont(f1);
@@ -122,8 +125,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.setFont(f2);
 		g.drawString("Current Tile: ", getWidth()*1630/1920, getHeight()*660/1080);
 
-		g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
-
 		Font f3 = new Font("Times New Roman", 0, getHeight()*25/1080);
 		g.setFont(f3);
 		g.drawString("Tiles Remaining: ", getWidth()*1625/1920, getHeight()*870/1080);
@@ -132,6 +133,24 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.setFont(f4);
 		g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
 		g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
+
+		// Map
+		this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
+		g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
+
+		// borderlines
+		for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
+			b.translate(getWidth()*20/1920, getHeight()*20/1080);
+			//g.drawRect(b.x(), b.y(), b.width(), b.height());
+		}
+
+		// Status message
+		Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
+		g.setFont(f5);
+		g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
+
+		// tile preview
+		g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
 	}
 
 	public void nextRot() {
@@ -140,6 +159,13 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 	}
 
 	public void fetchNewTile() {
+
+		if (this.dec.isEmpty()) {
+			System.out.println("All cards in Dec is used, Gamed ended");
+
+			// Do Ending sequence here.
+		}
+
 	    int tileindx = 0;
 		if(!this.river.isEmpty()) {
 		    // 75 should be the last
@@ -150,7 +176,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 			tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
 
 		int ftileindx = tileindx;
-		System.out.println(ftileindx + " " + tileindx);
 		this.curr_tile = this.map.resources.getTiles().get(tileindx);
 		this.dec.removeIf(v -> v.equals(ftileindx));
 		this.river.removeIf(v -> v.equals(ftileindx));
@@ -168,10 +193,15 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 			    if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
 					System.out.println("added at " + b.tilex + " " + b.tiley);
 					fetchNewTile();
+					this.statusMessage = "";
+				} else {
+			    	// TODO Message this
+                    this.statusMessage = "Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
+			    	System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
 				}
 			}
 		}
-    this.repaint();
+    	this.repaint();
 	}
 
 	@Override

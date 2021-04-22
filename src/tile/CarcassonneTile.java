@@ -65,7 +65,7 @@ public class CarcassonneTile {
 		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
 		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = r.createGraphics();
-		g2d.drawImage(this.resize(tileimg.getSubimage(4, 4, tileimg.getWidth()-5, tileimg.getHeight()-5), 75, 75), 0, 0, null);
+		g2d.drawImage(this.resize(tileimg.getSubimage(4, 4, tileimg.getWidth()-4, tileimg.getHeight()-4), 75, 75), 0, 0, null);
 		g2d.dispose();
 
 		return r;

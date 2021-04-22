@@ -135,6 +135,7 @@ public class TileParser {
         HashMap<Integer, CarcassonneTile> t = p.loadTiles("src/res/tileImg/tile_data.txt");
         System.out.println(t.size());
         t.get(50).rotate(Rotation.D90);
-        System.out.println(t.get(48));
+        System.out.println(t.get(2));
+        System.out.println(t.get(14));
     }
 }
