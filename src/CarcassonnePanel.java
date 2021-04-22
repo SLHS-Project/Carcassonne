@@ -180,8 +180,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
             tileindx = this.dec.get((int) (Math.random() * this.dec.size()-1));
 
         int ftileindx = tileindx;
-        //this.curr_tile = this.map.resources.getTiles().get(tileindx);
-        this.curr_tile = this.map.resources.getTiles().get(66);
+        this.curr_tile = this.map.resources.getTiles().get(tileindx);
         this.dec.removeIf(v -> v.equals(ftileindx));
         this.river.removeIf(v -> v.equals(ftileindx));
 
@@ -201,7 +200,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
                     System.out.println("added at " + b.tilex + " " + b.tiley);
                     fetchNewTile();
-                    this.statusMessage = "";
+                    this.statusMessage = "added at " + b.tilex + " " + b.tiley;
                 } else {
                     // TODO Message this
                     this.statusMessage = "Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
