@@ -85,13 +85,8 @@ public class CarcassonneMap {
     public boolean tryAddAt(CarcassonneTile t, int x, int y) {
         if(!this.canAddAt(t, x, y)) return false;
         this.map[x][y] = t;
-        addToVariables(t, x, y);
+        complete(t, x, y);
         return true;
-    }
-    
-    private void addToVariables(CarcassonneTile t, int x, int y)
-    {
-    		
     }
 
     class Coordinate {
@@ -317,17 +312,15 @@ public class CarcassonneMap {
 	}
 
   //checks if any feature is completed
-  	public String complete (CarcassonneTile tile, int x, int y)
+  	public void complete (CarcassonneTile tile, int x, int y)
   	{
-  		String s="";
   		if(completeRD(tile, x, y))
-  			s+="RD ";
+  			roadScoring(tile);
   		if(completeC(tile, x, y))
-  			s+="C ";
-  		if(completeM(tile, x, y)!=null)
-  			s+="M";
-  		
-  		return s;
+  			cityScoring(tile);
+  		ArrayList<CarcassonneTile> list=completeM(tile, x, y);
+  		if(list!=null)
+  			monasteryScoring(list);
   	}
   	private boolean completeRD (CarcassonneTile tile, int x, int y)
   	{
@@ -446,7 +439,7 @@ public class CarcassonneMap {
   		
   	}
   				  	
-  	//DO THIS!
+  	//add new city tile to cities
   	private boolean completeC (CarcassonneTile tile, int x, int y)
   	{
   		if(!tile.hasCity())
@@ -647,7 +640,7 @@ public class CarcassonneMap {
   	}
   	
   	//assume the just-placed tile completed a road, do score calculation
-  	public void roadScoring(CarcassonneTile tile, Point loc)
+  	public void roadScoring(CarcassonneTile tile)
   	{
   		
   		//tileCodes have all the tiles that the completed road is on
@@ -684,7 +677,7 @@ public class CarcassonneMap {
 
   	//assume the just-placed tile completed a monastery, do score calculation
   	//MTile is the tile with the monastery on it, this will be done via completeM
-  	public void monasteryScoring(ArrayList<CarcassonneTile> MTiles, Point loc)
+  	public void monasteryScoring(ArrayList<CarcassonneTile> MTiles)
   	{
   		for(CarcassonneTile MTile: MTiles) {
   				String name="";
