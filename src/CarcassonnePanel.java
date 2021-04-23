@@ -168,7 +168,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
 
     public void fetchNewTile() {
-
         if (this.dec.isEmpty()) {
             System.out.println("All cards in Dec is used, Gamed ended");
 
@@ -229,13 +228,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 case 'R': case 'r': this.statusMessage = "Meeple added to the road";break;
                 case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";break;
                 case 'C': case 'c': this.statusMessage = "Meeple added to the city";break;
-                case 'N':
-                case 'n':
-                    this.statusMessage = "skipped meeple";
-break;
-                default:
-                    this.repaint();
-                    return;
+                case 'N': case 'n': this.statusMessage = "skipped meeple";break;
+                default: this.repaint();return;
             }
             this.addMeepleState = false;
         } else {
