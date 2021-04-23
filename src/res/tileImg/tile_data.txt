@@ -11,7 +11,7 @@
 11 [river: ] [city: SEW] [road: ] [monastery: ]
 12 [river: ] [city: SW*] [road: ] [monastery: ]
 13 [river: ] [city: ] [road: NSE *] [monastery: ]
-14 [river: ] [city: N false] [road: EW] [monastery: ]
+14 [river: ] [city: N] [road: EW] [monastery: ]
 15 [river: ] [city: ] [road: EW] [monastery: ]
 16 [river: ] [city: S] [road: NEW *] [monastery: ]
 17 [river: ] [city: NE] [road: SW] [monastery: ]
