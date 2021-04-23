@@ -19,7 +19,7 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 	private Color yellow = new Color(255, 254, 185);
 	private Color grey = new Color(206, 206, 206);
 	private Color lightorangebrown = new Color(236, 182, 100);
-	private BufferedImage logo;
+	private BufferedImage logo, inst;
 	
 
 	public InstructionsPanel() throws IOException
@@ -33,6 +33,7 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 		try
 		{
 			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
+			inst = ImageIO.read(CarcassonnePanel.class.getResource("/Images/inst.PNG"));
 		}
 		
 		
@@ -56,6 +57,7 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 		g.setFont(f2);
 		g.drawString("Press '?'", getWidth()*90/1920, getHeight()*955/1080);
 		g.drawString("To Go Back", getWidth()*70/1920, getHeight()*1010/1080);
+		g.drawImage(inst, getWidth()*500/1920, getHeight()*50/1080, getWidth()*920/1920, getHeight()*700/1080, null);
 		
 	}
 	
