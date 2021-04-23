@@ -379,23 +379,8 @@ public class CarcassonneMap {
   	}
   	private boolean completeRD (CarcassonneTile tile, int x, int y)
   	{
-  		
-  		Side[] s = tile.getSides();
-  		String temp="";
-  		for(int i=0; i<s.length; i++)
-  		{
-  			TerrainType[] ts=s[i].getSide();
-  			if(ts[1].Road!=null) {
-  				if(i==0)
-  					temp+="N ";
-  				else if(i==1)
-  					temp+="W ";
-  				else if(i==2)
-  					temp+="S ";
-  				else
-  					temp+="E";
-  			}
-  		}
+  		String temp=tile.getRoadDirections();
+  		//no road exist
   		if(temp.length()<1)
   			return false;
   		//consists of the direction of the road: "N W"
@@ -500,22 +485,8 @@ public class CarcassonneMap {
   		if(!tile.hasCity())
   			return false;
   		
-  		Side[] s = tile.getSides();
-  		String temp="";
-  		for(int i=0; i<s.length; i++)
-  		{
-  			TerrainType[] ts=s[i].getSide();
-  			if(ts[1].City!=null) {
-  				if(i==0)
-  					temp+="N ";
-  				else if(i==1)
-  					temp+="W ";
-  				else if(i==2)
-  					temp+="S ";
-  				else
-  					temp+="E";
-  			}
-  		}
+  		String temp=tile.getCityDirections();
+  		
   		//consists of the direction of the road: "N W"
   		String[] c=temp.split(" ");
   		ArrayList<CarcassonneTile> cityTiles=new ArrayList<>();
@@ -569,22 +540,7 @@ public class CarcassonneMap {
   		cityTiles=contains(tile, "C");
   		for(CarcassonneTile t: cityTiles)
   		{
-  			s = t.getSides();
-    		temp="";
-    		for(int i=0; i<s.length; i++)
-    		{
-    			TerrainType[] ts=s[i].getSide();
-    			if(ts[1].City!=null) {
-    				if(i==0)
-    					temp+="N ";
-    				else if(i==1)
-    					temp+="W ";
-    				else if(i==2)
-    					temp+="S ";
-    				else
-    					temp+="E";
-    			}
-    		}
+    		temp=t.getCityDirections();
     		c=temp.split(" ");
     		for(String direction: c)
     		{
