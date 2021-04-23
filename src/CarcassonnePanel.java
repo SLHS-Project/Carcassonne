@@ -38,15 +38,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
 
     public CarcassonnePanel() throws IOException {
-        r=new CarcassonnePlayer("red");
-        y=new CarcassonnePlayer("yellow");
-        b=new CarcassonnePlayer("blue");
-        g=new CarcassonnePlayer("green");
-
-        map = new CarcassonneMap(r, y, b, g);
-        statusMessage = "";
-        addMeepleState = false;
-
+        initializeGame();
         initializeDeck();
 
         addKeyListener(this);
@@ -60,6 +52,17 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         catch(Exception E) {
             E.printStackTrace();
         }
+    }
+
+    private void initializeGame() {
+        r=new CarcassonnePlayer("red");
+        y=new CarcassonnePlayer("yellow");
+        b=new CarcassonnePlayer("blue");
+        g=new CarcassonnePlayer("green");
+
+        map = new CarcassonneMap(r, y, b, g);
+        statusMessage = "";
+        addMeepleState = false;
     }
 
     private void initializeDeck() {
@@ -81,6 +84,11 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
         this.dec.removeIf(v -> v.equals(37));
         this.fetchNewTile();
+    }
+
+    private void restartGame() {
+        initializeGame();
+        initializeDeck();
     }
 
     public void paint(Graphics g) {
@@ -236,6 +244,10 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
             switch (e.getKeyChar()) {
                 case 'r':
                     this.nextRot();
+                    break;
+                case 'R':
+                    this.restartGame();
+                    break;
             }
         }
 
