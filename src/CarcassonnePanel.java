@@ -168,7 +168,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
 
     public void fetchNewTile() {
-
         if (this.dec.isEmpty()) {
             System.out.println("All cards in Dec is used, Gamed ended");
 
