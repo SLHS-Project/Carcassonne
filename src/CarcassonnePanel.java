@@ -122,7 +122,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		g.setFont(f2);
 		g.drawString("Current Tile: ", getWidth()*1630/1920, getHeight()*660/1080);
 
-		g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
+		g.drawImage(this.curr_tile.getImage(), getWidth()*1700/1920, getHeight()*700/1080, null); //1630 -> 1700, 660 -> 700
 
 		Font f3 = new Font("Times New Roman", 0, getHeight()*25/1080);
 		g.setFont(f3);
