@@ -86,6 +86,7 @@ public class CarcassonneMap {
         if(!this.canAddAt(t, x, y)) return false;
         this.map[x][y] = t;
         complete(t, x, y);
+        addToFarmland(t, x, y);
         return true;
     }
 
@@ -311,7 +312,61 @@ public class CarcassonneMap {
         return new GameBoardGraphics(r, imgBoundPoss);
 	}
 
-  //checks if any feature is completed
+    //DO THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private void addToFarmland(CarcassonneTile tile, int x, int y)
+    {
+    		/*String line="";
+    		String[] directions=line.split(" ");
+    		
+    		//if rivers/roads don't exist
+    		ArrayList<CarcassonneTile> list=new ArrayList<>();
+    		for(int i=0; i<directions.length; i++)
+    		{
+    				String D1=directions[i];
+    				CarcassonneTile tile1=aroundTile(x, y, D1);
+    				if(i==0)
+    					list=farmlands.get(farmlandContains(tile1));
+    				else
+    				{
+    					ArrayList<CarcassonneTile> list1=farmlands.get(farmlandContains(tile1));
+    					if(!list1.equals(list))
+    					{
+    						list.addAll(list1)
+    					}
+    				}
+    		}*/
+    }
+    
+    private int farmlandContains(CarcassonneTile tile)
+    {
+    	 for(int i=0; i<farmlands.size(); i++)
+    	 {
+    		 ArrayList<CarcassonneTile> list=farmlands.get(i);
+    		 for(CarcassonneTile t: list)
+    		 {
+    			 if(t.getCode()==tile.getCode())
+    				 return i;
+    		 }
+    	 }
+    	 System.out.println("tile not included in farmland");
+    	 return -1;
+    }
+    
+    private CarcassonneTile aroundTile(int x, int y, String d)
+    {
+    		if(d.equals("N"))
+    			return map[x][y-1];
+    		if(d.equals("S"))
+    			return map[x][y+1];
+    		if(d.equals("E"))
+    			return map[x-1][y];
+    		if(d.equals("W"))
+    			return map[x+1][y];
+    		System.out.println("none valid direction");
+    		return null;
+    }
+    
+    //checks if any feature is completed
   	public void complete (CarcassonneTile tile, int x, int y)
   	{
   		if(completeRD(tile, x, y))
