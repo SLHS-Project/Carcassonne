@@ -164,6 +164,24 @@ public class CarcassonneTile {
 		}
 		return num;
 	}
+
+	public String getRoadDirections() {
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[1] == TerrainType.Road) ret += keys.charAt(i) + " ";
+
+		return ret;
+	}
+
+	public String getCityDirections() {
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[1] == TerrainType.City) ret += keys.charAt(i) + " ";
+
+		return ret;
+	}
 	
 	public boolean hasCity()
 	{
@@ -217,6 +235,9 @@ public class CarcassonneTile {
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
 		});
+		System.out.println(t1);
+		System.out.println(t1.getRoadDirections());
+		System.out.println(t1.getCityDirections());
 		/*
 		// T1
 			  City    City    Farm
@@ -235,6 +256,7 @@ public class CarcassonneTile {
 		// Test fitting each rotation, connecting from West of T1
 		// 90 Degrees should only work.
 		 */
+		/*
 		System.out.println("t1: " + t1 + "\nt2: " + t2);
 
 
@@ -292,5 +314,6 @@ public class CarcassonneTile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		 */
 	}
 }
