@@ -20,6 +20,7 @@ import tile.Rotation;
 import tile.CarcassonneTile;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
+    private boolean addMeepleState;
     private String statusMessage;
     private CarcassonneMap.GameBoardGraphics gbg;
     private Rotation curr_rot;
@@ -44,6 +45,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
         map = new CarcassonneMap(r, y, b, g);
         statusMessage = "";
+        addMeepleState = false;
 
         initializeDeck();
 
@@ -194,20 +196,26 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         tx = x;
         ty = y;
 
-        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-            b.translate(getWidth()*20/1920, getHeight()*20/1080);
-            if(b.contains(x, y)) {
-                if(map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
-                    System.out.println("added at " + b.tilex + " " + b.tiley);
-                    fetchNewTile();
-                    this.statusMessage = "added at " + b.tilex + " " + b.tiley;
-                } else {
-                    // TODO Message this
-                    this.statusMessage = "Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
-                    System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
+        // check for adding tile
+        if(!this.addMeepleState) {
+            for (CarcassonneMap.Boundary b : gbg.getBoundaries()) {
+                b.translate(getWidth() * 20 / 1920, getHeight() * 20 / 1080);
+                if (b.contains(x, y)) {
+                    if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
+                        System.out.println("added at " + b.tilex + " " + b.tiley);
+                        fetchNewTile();
+                        this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/[N]one)? ";
+                        this.addMeepleState = true;
+                    } else {
+                        // TODO Message this
+                        this.statusMessage = "Cannot be added, conflict at " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
+                        System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
+                    }
                 }
             }
         }
+
+        // do instruction etc here.
         this.repaint();
     }
 
@@ -229,9 +237,32 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
     @Override
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyChar()) {
-            case 'r':
-                this.nextRot();
+        if(this.addMeepleState) {
+            // Meeple adding here
+            switch (e.getKeyChar()) {
+                case 'R':
+                case 'r':
+                    this.statusMessage = "Meeple added to the road";
+                    break;
+                case 'F':
+                case 'f':
+                    this.statusMessage = "Meeple added to the farmland";
+                    break;
+                case 'C':
+                case 'c':
+                    this.statusMessage = "Meeple added to the city";
+                    break;
+                case 'N':
+                case 'n':
+                    this.statusMessage = "skipped meeple";
+                    break;
+            }
+            this.addMeepleState = false;
+        } else {
+            switch (e.getKeyChar()) {
+                case 'r':
+                    this.nextRot();
+            }
         }
 
         this.repaint();
