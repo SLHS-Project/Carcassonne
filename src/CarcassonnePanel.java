@@ -192,9 +192,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         this.curr_rot = Rotation.D0;
     }
 
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+	public void mouseClicked(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
 
         tx = x;
         ty = y;
@@ -245,8 +245,8 @@ break;
             }
         }
 
-        this.repaint();
-    }
+		this.repaint();
+	}
 
     @Override public void keyReleased(KeyEvent arg0) { }
     @Override public void keyTyped(KeyEvent arg0) { }
