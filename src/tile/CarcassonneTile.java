@@ -185,14 +185,9 @@ public class CarcassonneTile {
 	
 	public boolean hasCity()
 	{
-		boolean exist=false;
-		for(Side s: sides)
-		{
-			TerrainType[] t=s.getSide();
-			if(t[1].City!=null) //check if the road exist on this side of the tile
-				exist=true;
-		}
-		return exist;
+		if(getCityDirections().length()>0)
+			return true;
+		return false;
 	}
 	public Meeple getMeeple()
 	{
