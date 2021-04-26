@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.Queue;
 
 public class BeginningPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
+
+	private CarcassonneGraphic parent;
 	
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
@@ -22,8 +24,9 @@ public class BeginningPanel extends JPanel implements MouseListener, ActionListe
 	private BufferedImage logo;
 	
 
-	public BeginningPanel() throws IOException
+	public BeginningPanel(CarcassonneGraphic parent) throws IOException
 	{
+	    this.parent = parent;
 		Scanner input = new Scanner(System.in);
 		addKeyListener(this);
 		setFocusable(true);
@@ -73,10 +76,8 @@ public class BeginningPanel extends JPanel implements MouseListener, ActionListe
 	}
 	
 
-	public void mouseClicked(MouseEvent e) 
-	{
-		
-	
+	public void mouseClicked(MouseEvent e) {
+	    this.parent.layout.show(this.parent.main, "game");
 	}
 
 
