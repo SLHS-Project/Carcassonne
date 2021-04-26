@@ -17,100 +17,6 @@ import java.util.*;
 import java.util.Queue;
 import tile.Rotation;
 
-<<<<<<< HEAD
-public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener{
-	private CarcassonneMap.GameBoardGraphics gbg;
-	private Rotation curr_rot;
-	private ArrayList<Integer> river;
-	private ArrayList<Integer> dec;
-	private CarcassonneTile curr_tile;
-	private Color brown = new Color(210, 161, 132);
-	private Color yellow = new Color(255, 254, 185);
-	private Color grey = new Color(206, 206, 206);
-	private BufferedImage logo;
-	private CarcassonnePlayer r, y, b, g;
-	private CarcassonneMap map;
-
-	public CarcassonnePanel() throws IOException {
-		r=new CarcassonnePlayer("red");
-		y=new CarcassonnePlayer("yellow");
-		b=new CarcassonnePlayer("blue");
-		g=new CarcassonnePlayer("green");
-
-
-		map = new CarcassonneMap(r, y, b, g);
-
-		this.dec = new ArrayList<>();
-		this.river = new ArrayList<>();
-		this.river.add(38);
-		this.river.add(40);
-		this.river.add(49);
-		this.river.add(50);
-		this.river.add(51);
-		this.river.add(52);
-		this.river.add(61);
-		this.river.add(73);
-		this.river.add(74);
-		this.river.add(75);
-		this.dec.removeIf(v -> v.equals(37));
-		for(int i = 0; i < 84; i++) this.dec.add(i);
-		for(int i: this.river) this.dec.removeIf(v -> v.equals(i));
-
-		this.fetchNewTile();
-
-		addKeyListener(this);
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
-		addMouseListener(this);
-		
-<<<<<<< HEAD
-		try
-		{
-			logo = ImageIO.read(BeginningPanel.class.getResource("/Images/logo.jpg"));
-=======
-		try {
-			logo = ImageIO.read(CarcassonnePanel.class.getResource("/Images/logo.jpg"));
->>>>>>> bf25f144b6b951c56f939418a02f5078c713b30f
-		}
-		catch(Exception E) {
-		    E.printStackTrace();
-		}
-	}
-
-	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g.setColor(yellow);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(brown);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(yellow);
-		g.fillRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
-		g.drawImage(logo, getWidth()*1610/1920, getHeight()*20/1080, (getWidth()-getWidth()*25/1920) - (getWidth()*1605/1920), (getHeight()*170/1080) - (getHeight()*20/1080), null);
-		
-		g.setColor(grey);
-		g.fillRect(getWidth()*1610/1920, getHeight()*890/1080, (getWidth()-getWidth()*20/1920)-(getWidth()*1610/1920), (getHeight()-getHeight()*20/1080)-(getHeight()*890/1080));
-		
-		g2.setStroke(new BasicStroke(6));
-		g.setColor(Color.black);
-		g.drawRect(getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*40/1920, getHeight()-getHeight()*40/1080);
-		g.drawRect(0, 0, getWidth(), getHeight());
-		
-		// board location: getWidth()*20/1920, getHeight()*20/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080
-		g.setColor(Color.black);
-		g.drawLine(getWidth()*1610/1920, getHeight()*20/1080, getWidth()*1610/1920, getHeight()-getHeight()*25/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*170/1080, getWidth()-getWidth()*25/1920, getHeight()*170/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*280/1080, getWidth()-getWidth()*25/1920, getHeight()*280/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*390/1080, getWidth()-getWidth()*25/1920, getHeight()*390/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*500/1080, getWidth()-getWidth()*25/1920, getHeight()*500/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
-		g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
-		g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
-
-		g.setColor(Color.black);
-=======
-import tile.CarcassonneTile;
-
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
     private boolean addMeepleState;
     private String statusMessage;
@@ -242,7 +148,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
 
         // Map
->>>>>>> 8046b4dc8463ef4ecd4783c6a61a027d04faa99d
         this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
         g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
 
