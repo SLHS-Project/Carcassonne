@@ -123,13 +123,18 @@ public class TileParser {
         } catch (FileNotFoundException e) {
             System.out.println("failed to load file: " + e);
         }
+
+        for(int i = 1; i <= 84; i++)
+            if (ret.get(i).getImage() == null)
+                System.out.println("Failed to load " + i);
+
         return ret;
     }
     public static void main(String args[]) {
         TileParser p = new TileParser();
         HashMap<Integer, CarcassonneTile> t = p.loadTiles("src/res/tileImg/tile_data.txt");
         System.out.println(t.size());
-        System.out.println(t.get(39));
-        System.out.println(t.get(53));
+        t.get(50).rotate(Rotation.D90);
+        System.out.println(t.get(48));
     }
 }

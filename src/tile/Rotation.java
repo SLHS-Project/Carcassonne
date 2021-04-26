@@ -1,6 +1,7 @@
 package tile;
 
 public enum Rotation {
+
     D0(0),
     D90(3),
     D180(2),

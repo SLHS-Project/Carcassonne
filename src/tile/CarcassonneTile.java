@@ -65,12 +65,21 @@ public class CarcassonneTile {
 		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
 		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = r.createGraphics();
-		g2d.setPaint ( new Color (12, 12, 12) );
-		g2d.fillRect ( 0, 0, r.getWidth(), r.getHeight() );
-		g2d.drawImage(tileimg, 0, 0, null);
+		g2d.drawImage(this.resize(tileimg.getSubimage(4, 4, tileimg.getWidth()-5, tileimg.getHeight()-5), 75, 75), 0, 0, null);
 		g2d.dispose();
 
 		return r;
+	}
+
+	public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+		Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+
+		return dimg;
 	}
 
 	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
@@ -114,6 +123,11 @@ public class CarcassonneTile {
 		};
 	}
 	
+	public boolean isMonastery()
+	{
+		return monastery;
+	}
+	
 	public boolean fit(CarcassonneTile t, Orient o) {
 		return this.getRotatedSides()[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
 	}
@@ -149,6 +163,31 @@ public class CarcassonneTile {
 				num++;
 		}
 		return num;
+	}
+
+	public String getRoadDirections() {
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[1] == TerrainType.Road) ret += keys.charAt(i) + " ";
+
+		return ret;
+	}
+
+	public String getCityDirections() {
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[1] == TerrainType.City) ret += keys.charAt(i) + " ";
+
+		return ret;
+	}
+	
+	public boolean hasCity()
+	{
+		if(getCityDirections().length()>0)
+			return true;
+		return false;
 	}
 	public Meeple getMeeple()
 	{
@@ -191,6 +230,9 @@ public class CarcassonneTile {
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm), //S
 				new Side(TerrainType.Farm, TerrainType.Farm, TerrainType.Farm)  //E
 		});
+		System.out.println(t1);
+		System.out.println(t1.getRoadDirections());
+		System.out.println(t1.getCityDirections());
 		/*
 		// T1
 			  City    City    Farm
@@ -209,6 +251,7 @@ public class CarcassonneTile {
 		// Test fitting each rotation, connecting from West of T1
 		// 90 Degrees should only work.
 		 */
+		/*
 		System.out.println("t1: " + t1 + "\nt2: " + t2);
 
 
@@ -266,5 +309,6 @@ public class CarcassonneTile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		 */
 	}
 }
