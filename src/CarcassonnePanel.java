@@ -18,6 +18,7 @@ import java.util.Queue;
 import tile.Rotation;
 
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
+    private CarcassonneGraphic parent;
     private boolean addMeepleState;
     private String statusMessage;
     private CarcassonneMap.GameBoardGraphics gbg;
@@ -35,7 +36,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     int tx, ty;
 
 
-    public CarcassonnePanel() throws IOException {
+    public CarcassonnePanel(CarcassonneGraphic parent) throws IOException {
+        this.parent = parent;
         initializeGame();
         initializeDeck();
 
@@ -195,6 +197,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         this.river.removeIf(v -> v.equals(ftileindx));
 
         this.curr_rot = Rotation.D0;
+
+        this.statusMessage = "press [s] to skip";
     }
 
 	public void mouseClicked(MouseEvent e) {
@@ -228,6 +232,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
 
     public void keyPressed(KeyEvent e) {
+        System.out.println(e.getKeyChar());
         if(this.addMeepleState) {
             // Meeple adding here
             switch (e.getKeyChar()) {
@@ -243,8 +248,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 case 'r':
                     this.nextRot();
                     break;
+                case 's':
+                    this.fetchNewTile();
+                    break;
                 case 'R':
                     this.restartGame();
+                    this.parent.change("menu");
                     break;
             }
         }

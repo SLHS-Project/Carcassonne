@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.Queue;
 
 public class InstructionsPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
+
+	private CarcassonneGraphic parent;
 	
 	private Color brown = new Color(210, 161, 132);
 	private Color yellow = new Color(255, 254, 185);
@@ -22,8 +24,9 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 	private BufferedImage logo, inst;
 	
 
-	public InstructionsPanel() throws IOException
+	public InstructionsPanel(CarcassonneGraphic parent) throws IOException
 	{
+		this.parent = parent;
 		Scanner input = new Scanner(System.in);
 		addKeyListener(this);
 		setFocusable(true);
@@ -64,8 +67,10 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 
 	public void mouseClicked(MouseEvent e) 
 	{
-		
-	
+	    int x = e.getX();
+	    int y = e.getY();
+		if(x > this.getWidth() * 47/ 1920 && x < this.getWidth() * 252 / 1920 && y > this.getHeight() * 832/ 1080 && y < this.getHeight() * 1034/ 1080)
+			this.parent.change("menu");
 	}
 
 
