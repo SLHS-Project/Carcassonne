@@ -15,15 +15,15 @@ public class CarcassonneGraphic extends JFrame {
 	final public CardLayout layout;
 
 	public void change(String s) {
-
+	    this.layout.show(this.main, s);
 	}
 
 	public CarcassonneGraphic(String frameName) throws IOException {
 		super(frameName);
 
 		this.menu = new BeginningPanel(this);
-		this.instr = new InstructionsPanel();
-		this.game = new CarcassonnePanel();
+		this.instr = new InstructionsPanel(this);
+		this.game = new CarcassonnePanel(this);
 
 		this.layout = new CardLayout();
 		this.main = new JPanel(layout);
@@ -35,10 +35,10 @@ public class CarcassonneGraphic extends JFrame {
 		super.add(this.main);
 		super.pack();
 		super.setLocationRelativeTo(null);
-		super.setResizable(false);
+		//super.setResizable(false);
 		super.setVisible(true);
 
-		this.layout.show(this.main, "menu");
+		this.change("menu");
 		/*
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(WIDTH, HEIGHT);
