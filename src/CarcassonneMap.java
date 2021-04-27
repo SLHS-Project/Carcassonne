@@ -58,7 +58,7 @@ public class CarcassonneMap {
 
 		// 0, 0 is left, top
 		this.map = new CarcassonneTile[161][161];
-		this.tryAddAt(resources.getTiles().get(37), 81, 81);
+		this.tryAddAt(resources.getTiles().get(37), 81, 81, 37);
     }
 
 
@@ -82,12 +82,30 @@ public class CarcassonneMap {
         return this.getConflicts(t, x, y).isEmpty();
     }
 
-    public boolean tryAddAt(CarcassonneTile t, int x, int y) {
+    public boolean tryAddAt(CarcassonneTile t, int x, int y, int index) {
+    	t.setCode(index);
+    	System.out.println("placed tile is "+t.getCode());
         if(!this.canAddAt(t, x, y)) return false;
         this.map[x][y] = t;
         complete(t, x, y);
         addToFarmland(t, x, y);
+        
+        System.out.println("farmlands: "+print(farmlands));
+        System.out.println("cities: "+print(cities));
+        System.out.println("roads: "+print(roads)+"\n");
+        
         return true;
+    }
+    
+    public String print(ArrayList<ArrayList<CarcassonneTile>> list)
+    {
+    	String str="";
+    	for(ArrayList<CarcassonneTile> a: list)
+    	{
+    		for(CarcassonneTile t: a)
+    			str+=t.getCode()+" ";
+    	}
+    	return str;
     }
 
     class Coordinate {
@@ -315,7 +333,7 @@ public class CarcassonneMap {
     //DO THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void addToFarmland(CarcassonneTile tile, int x, int y)
     {
-    		/*String line="";
+    		String line="";
     		String[] directions=line.split(" ");
     		
     		//if rivers/roads don't exist
@@ -324,17 +342,38 @@ public class CarcassonneMap {
     		{
     				String D1=directions[i];
     				CarcassonneTile tile1=aroundTile(x, y, D1);
-    				if(i==0)
-    					list=farmlands.get(farmlandContains(tile1));
-    				else
-    				{
-    					ArrayList<CarcassonneTile> list1=farmlands.get(farmlandContains(tile1));
-    					if(!list1.equals(list))
-    					{
-    						list.addAll(list1)
+    				if(tile1!=null) {
+    					if(i==0) {
+    						int num=farmlandContains(tile1);
+    						if(num!=-1)
+    								list=farmlands.get(num);
     					}
-    				}
-    		}*/
+    					
+    					else
+    					{
+    						int num=farmlandContains(tile1);
+    						if(num!=-1) {
+    							ArrayList<CarcassonneTile> list1=farmlands.get(num);
+    							if(!list1.equals(list))
+    							{
+    								list.addAll(list1);
+    							}
+    						}
+    				}}
+    		}
+    		boolean contains=false;
+    		for(ArrayList<CarcassonneTile> a: farmlands)
+    		{
+    			if(a.contains(tile))
+    				contains=true;
+    		}
+    		if(!contains)
+    		{
+    			System.out.println("new farmland list for tile "+tile.getCode());
+    			ArrayList<CarcassonneTile> tempList=new ArrayList<>();
+    			tempList.add(tile);
+    			farmlands.add(tempList);
+    		}
     }
     
     private int farmlandContains(CarcassonneTile tile)
@@ -380,6 +419,7 @@ public class CarcassonneMap {
   	private boolean completeRD (CarcassonneTile tile, int x, int y)
   	{
   		String temp=tile.getRoadDirections();
+  		System.out.println("road directions: "+temp);
   		//no road exist
   		if(temp.length()<1)
   			return false;
@@ -404,6 +444,7 @@ public class CarcassonneMap {
   					tempTile=map[x+1][y];
   					//pt.setLocation(pt.getX()+tileSize, pt.getY());
   				
+  				System.out.println("tempTile of road is "+tempTile);
   				//if the tile exist and has road 
   				if(tempTile!=null && tempTile.checkRdDirections()>0)
   				{
@@ -509,17 +550,21 @@ public class CarcassonneMap {
   					//pt.setLocation(pt.getX()+tileSize, pt.getY());
   				
   				//CarcassonneTile tempTile=findTile(pt);
-  				if(i==0)
-  					cityTiles=contains(tempTile, "C");
-  				else
-  				{
-  					ArrayList<CarcassonneTile> newCityTiles=contains(tempTile, "C");
-  					//if the two arraylist doesn't equal
-  					if(!cityTiles.equals(newCityTiles)) {
-  						cityTiles.addAll(newCityTiles);
-  						cityTiles.add(tile);
-  						citiesVal.remove(cities.indexOf(newCityTiles));
-  						cities.remove(newCityTiles);
+  				if(tempTile==null)
+  					continue;
+  				else {
+  					if(i==0)
+  						cityTiles=contains(tempTile, "C");
+  					else
+  					{
+  						ArrayList<CarcassonneTile> newCityTiles=contains(tempTile, "C");
+  						//if the two arraylist doesn't equal
+  						if(!cityTiles.equals(newCityTiles)) {
+  							cityTiles.addAll(newCityTiles);
+  							cityTiles.add(tile);
+  							citiesVal.remove(cities.indexOf(newCityTiles));
+  							cities.remove(newCityTiles);
+  						}
   					}
   				}
   				
@@ -849,6 +894,8 @@ public class CarcassonneMap {
   	private void scoreCalc(String players, int spt, int tileCnt)
   	{
   		String[] p=players.split(" ");
+  		if(players.length()<2)
+  			return;
   		for(String s: p) {
   			callPlayer(s).addScore(spt*tileCnt);
   		}
@@ -897,7 +944,7 @@ public class CarcassonneMap {
   	}
     
   	
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         // Following is a test data. These does not have effect to the main program
 		CarcassonnePlayer r=new CarcassonnePlayer("red");
 		CarcassonnePlayer y=new CarcassonnePlayer("yellow");
@@ -929,5 +976,5 @@ public class CarcassonneMap {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
