@@ -60,6 +60,11 @@ public class CarcassonneTile {
 		this.sides = new Side[4];
 		this.sides = sides;
 	}
+	
+	public void setCode(int c)
+	{
+		code=c;
+	}
 
 	public BufferedImage getImage() {
 		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
@@ -164,12 +169,32 @@ public class CarcassonneTile {
 		}
 		return num;
 	}
-
+//counterclockwise
 	public String getRoadDirections() {
 		String ret = "";
 		String keys = "NWSE";
 		for(int i = 0; i < 4; i++)
-			if(this.sides[i].getSide()[1] == TerrainType.Road) ret += keys.charAt(i) + " ";
+			if(this.sides[i].getSide()[1] == TerrainType.Road) 
+			{
+				if(rotation.degree()==0)
+					ret += keys.charAt(i) + " ";
+				else if(rotation.degree()==90) {
+					int j=i+1;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==180) {
+					int j=i+2;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==270) {
+					int j=i+3;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+					
+			}
 
 		return ret;
 	}
@@ -178,7 +203,25 @@ public class CarcassonneTile {
 		String ret = "";
 		String keys = "NWSE";
 		for(int i = 0; i < 4; i++)
-			if(this.sides[i].getSide()[1] == TerrainType.City) ret += keys.charAt(i) + " ";
+			if(this.sides[i].getSide()[1] == TerrainType.City) {
+				if(rotation.degree()==0)
+					ret += keys.charAt(i) + " ";
+				else if(rotation.degree()==90) {
+					int j=i+1;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==180) {
+					int j=i+2;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==270) {
+					int j=i+3;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+			}
 
 		return ret;
 	}
