@@ -17,8 +17,6 @@ import java.util.*;
 import java.util.Queue;
 import tile.Rotation;
 
-import tile.CarcassonneTile;
-
 public class CarcassonnePanel extends JPanel implements MouseListener, ActionListener, KeyListener {
     private boolean addMeepleState;
     private String statusMessage;
