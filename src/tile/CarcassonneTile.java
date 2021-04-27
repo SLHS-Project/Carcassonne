@@ -139,11 +139,17 @@ public class CarcassonneTile {
 	
 	public boolean isCR()
 	{
-		return true;
+		ArrayList<Integer> a=new ArrayList<>(Arrays.asList(13, 16, 33, 43, 45, 57, 69, 72));
+		if(a.contains(code))
+			return true;
+		return false;
 	}
 	public boolean isRiver()
 	{
-		return true;
+		ArrayList<Integer> a=new ArrayList<>(Arrays.asList(37, 38, 39, 40, 49, 50, 51, 52, 61, 73, 74, 75));
+		if(a.contains(code))
+			return true;
+		return false;
 	}
 	public boolean hasShield()
 	{
@@ -153,10 +159,6 @@ public class CarcassonneTile {
 		return false;
 	}
 	
-	public String getTypes()
-	{
-		return "";
-	}
 	
 	public int checkRdDirections()
 	{
@@ -173,12 +175,13 @@ public class CarcassonneTile {
 	public String getRoadDirections() {
 		String ret = "";
 		String keys = "NWSE";
+		System.out.println("tile rotation "+rotation.degree());
 		for(int i = 0; i < 4; i++)
 			if(this.sides[i].getSide()[1] == TerrainType.Road) 
 			{
 				if(rotation.degree()==0)
 					ret += keys.charAt(i) + " ";
-				else if(rotation.degree()==90) {
+				else if(rotation.degree()==270) {
 					int j=i+1;
 					j=j%4;
 					ret += keys.charAt(j) + " ";
@@ -188,7 +191,7 @@ public class CarcassonneTile {
 					j=j%4;
 					ret += keys.charAt(j) + " ";
 				}
-				else if(rotation.degree()==270) {
+				else if(rotation.degree()==90) {
 					int j=i+3;
 					j=j%4;
 					ret += keys.charAt(j) + " ";
@@ -206,7 +209,7 @@ public class CarcassonneTile {
 			if(this.sides[i].getSide()[1] == TerrainType.City) {
 				if(rotation.degree()==0)
 					ret += keys.charAt(i) + " ";
-				else if(rotation.degree()==90) {
+				else if(rotation.degree()==270) {
 					int j=i+1;
 					j=j%4;
 					ret += keys.charAt(j) + " ";
@@ -216,7 +219,65 @@ public class CarcassonneTile {
 					j=j%4;
 					ret += keys.charAt(j) + " ";
 				}
+				else if(rotation.degree()==90) {
+					int j=i+3;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+			}
+
+		return ret;
+	}
+	
+	public String blockFarm()
+	{
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[0] == TerrainType.Farm && 
+				 this.sides[i].getSide()[2] == TerrainType.Farm && 
+				 this.sides[i].getSide()[1] != TerrainType.Farm) {
+				if(rotation.degree()==0)
+					ret += keys.charAt(i) + " ";
 				else if(rotation.degree()==270) {
+					int j=i+1;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==180) {
+					int j=i+2;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==90) {
+					int j=i+3;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+			}
+
+		return ret;
+	}
+	
+	public String getFarmDirections()
+	{
+		String ret = "";
+		String keys = "NWSE";
+		for(int i = 0; i < 4; i++)
+			if(this.sides[i].getSide()[1] == TerrainType.Farm) {
+				if(rotation.degree()==0)
+					ret += keys.charAt(i) + " ";
+				else if(rotation.degree()==270) {
+					int j=i+1;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==180) {
+					int j=i+2;
+					j=j%4;
+					ret += keys.charAt(j) + " ";
+				}
+				else if(rotation.degree()==90) {
 					int j=i+3;
 					j=j%4;
 					ret += keys.charAt(j) + " ";
