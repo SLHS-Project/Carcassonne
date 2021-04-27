@@ -32,7 +32,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     private BufferedImage logo;
     private CarcassonnePlayer r, y, b, g;
     private CarcassonneMap map;
-
+    private int tIndex=37;
     int tx, ty;
 
 
@@ -196,6 +196,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         this.dec.removeIf(v -> v.equals(ftileindx));
         this.river.removeIf(v -> v.equals(ftileindx));
 
+        tIndex=tileindx;
+        
         this.curr_rot = Rotation.D0;
 
         this.statusMessage = "press [s] to skip";
@@ -213,7 +215,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
             for (CarcassonneMap.Boundary b : gbg.getBoundaries()) {
                 b.translate(getWidth() * 20 / 1920, getHeight() * 20 / 1080);
                 if (b.contains(x, y)) {
-                    if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley)) {
+                    if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley, tIndex)) {
                         System.out.println("added at " + b.tilex + " " + b.tiley);
                         fetchNewTile();
                         this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/[N]one)? ";
