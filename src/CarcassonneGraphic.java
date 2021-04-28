@@ -18,6 +18,10 @@ public class CarcassonneGraphic extends JFrame {
 	    this.layout.show(this.main, s);
 	}
 
+	public void changePrev() {
+		this.layout.previous(this.main);
+	}
+
 	public CarcassonneGraphic(String frameName) throws IOException {
 		super(frameName);
 

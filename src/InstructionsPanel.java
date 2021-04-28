@@ -58,7 +58,7 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 		g2.drawRect(getWidth()*50/1920, getHeight()*850/1080, getWidth()*200/1920, getHeight()*200/1080);
 		Font f2 = new Font("Times New Roman", 0, getHeight()*30/1080);
 		g.setFont(f2);
-		g.drawString("Press '?'", getWidth()*90/1920, getHeight()*955/1080);
+		g.drawString("Click here", getWidth()*90/1920, getHeight()*955/1080);
 		g.drawString("To Go Back", getWidth()*70/1920, getHeight()*1010/1080);
 		g.drawImage(inst, getWidth()*500/1920, getHeight()*50/1080, getWidth()*920/1920, getHeight()*700/1080, null);
 		
@@ -70,7 +70,7 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 	    int x = e.getX();
 	    int y = e.getY();
 		if(x > this.getWidth() * 47/ 1920 && x < this.getWidth() * 252 / 1920 && y > this.getHeight() * 832/ 1080 && y < this.getHeight() * 1034/ 1080)
-			this.parent.change("menu");
+			this.parent.changePrev();
 	}
 
 
@@ -107,8 +107,6 @@ public class InstructionsPanel extends JPanel implements MouseListener, ActionLi
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		
 	}
 
 
