@@ -26,6 +26,12 @@ public class CarcassonneGraphic extends JFrame {
 		this.game = new CarcassonnePanel(this);
 
 		this.layout = new CardLayout();
+		/*this.menu = new BeginningPanel(this);
+		this.instr = new InstructionsPanel();
+		this.game = new CarcassonnePanel();
+ 
+		
+>>>>>>> Stashed changes
 		this.main = new JPanel(layout);
 		this.main.setPreferredSize(new Dimension(1920, 1080));
 		this.main.add(menu, "menu");
@@ -38,12 +44,16 @@ public class CarcassonneGraphic extends JFrame {
 		//super.setResizable(false);
 		super.setVisible(true);
 
+<<<<<<< Updated upstream
 		this.change("menu");
 		/*
+=======
+		this.layout.show(this.main, "menu");
+	*/	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(WIDTH, HEIGHT);
-		add(new CarcassonnePanel());
+		add(new CarcassonnePanel(this));
 		setVisible(true);
-		 */
+		
 	}
 }
