@@ -104,6 +104,7 @@ public class CarcassonneMap {
     	{
     		for(CarcassonneTile t: a)
     			str+=t.getCode()+" ";
+    		str+="\n\t";
     	}
     	return str;
     }
@@ -333,7 +334,34 @@ public class CarcassonneMap {
     //DO THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void addToFarmland(CarcassonneTile tile, int x, int y)
     {
-    		String line="";
+    		//if blockFarm() is two then the land is separated into 2 pieces, if is three then separated into 3 pieces
+    		String block=tile.blockFarm();
+    		String[] blocks=block.split(" ");
+    		if(blocks.length<2) {
+    			noBlock(tile, x, y);
+    			return;
+    		}
+    			
+    		//creates separate arraylist for each section of the farmland
+    		ArrayList<ArrayList<CarcassonneTile>> lists=new ArrayList<>();
+    		for(int i=0; i<blocks.length; i++)
+    		{
+    			 ArrayList<CarcassonneTile> list=new ArrayList<>();
+    			 lists.add(list);
+    		}
+    		System.out.println("lists size for farmland is "+lists.size());
+    		//searches for surrounding tiles for each section of the farmland
+    			//if the surrounding tiles of two sections connect, then add the tiles, remove duplicate
+    			//if doesn't connect, add the tile to corresponding arraylist
+    	if(tile.checkRdDirections()<=1 && (!tile.isRiver()))
+    	{
+    		noBlock(tile, x, y);
+    	}
+    		
+    }
+    private void noBlock(CarcassonneTile tile, int x, int y)
+    {
+    	String line=tile.getFarmDirections();
     		String[] directions=line.split(" ");
     		
     		//if rivers/roads don't exist
@@ -343,10 +371,14 @@ public class CarcassonneMap {
     				String D1=directions[i];
     				CarcassonneTile tile1=aroundTile(x, y, D1);
     				if(tile1!=null) {
+      				System.out.println("around tile for farmland "+tile1.getCode());
     					if(i==0) {
     						int num=farmlandContains(tile1);
-    						if(num!=-1)
-    								list=farmlands.get(num);
+    						if(num!=-1) {
+    							list=farmlands.get(num);
+    							list.add(tile);
+    						}
+    								
     					}
     					
     					else
@@ -534,6 +566,7 @@ public class CarcassonneMap {
   		for(int i=0; i<c.length; i++)
   		{
   				String direction=c[i];
+  				System.out.println("city direction "+direction);
   				CarcassonneTile tempTile;
   				//Point pt=Map.get(tile);
   				if(direction.equals("N"))
@@ -553,6 +586,7 @@ public class CarcassonneMap {
   				if(tempTile==null)
   					continue;
   				else {
+  					System.out.println("tempTile next to city is "+tempTile.getCode());
   					if(i==0)
   						cityTiles=contains(tempTile, "C");
   					else

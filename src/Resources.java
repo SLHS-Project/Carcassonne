@@ -35,6 +35,7 @@ public class Resources {
         ArrayList<CarcassonneTile> ret = new ArrayList<>();
         ret.add(this.tiles.get(37));
         ret.add(this.tiles.get(38));
+        ret.add(this.tiles.get(39));
         ret.add(this.tiles.get(40));
         ret.add(this.tiles.get(49));
         ret.add(this.tiles.get(50));
