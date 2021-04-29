@@ -342,21 +342,12 @@ public class CarcassonneMap {
     			return;
     		}
     			
+    		
+    		
     		//creates separate arraylist for each section of the farmland
-    		ArrayList<ArrayList<CarcassonneTile>> lists=new ArrayList<>();
-    		for(int i=0; i<blocks.length; i++)
-    		{
-    			 ArrayList<CarcassonneTile> list=new ArrayList<>();
-    			 lists.add(list);
-    		}
-    		System.out.println("lists size for farmland is "+lists.size());
     		//searches for surrounding tiles for each section of the farmland
     			//if the surrounding tiles of two sections connect, then add the tiles, remove duplicate
     			//if doesn't connect, add the tile to corresponding arraylist
-    	if(tile.checkRdDirections()<=1 && (!tile.isRiver()))
-    	{
-    		noBlock(tile, x, y);
-    	}
     		
     }
     private void noBlock(CarcassonneTile tile, int x, int y)
@@ -869,6 +860,17 @@ public class CarcassonneMap {
   				}
   				cityIndex.clear();
   		}
+  	}
+  	
+  	public void finalFarmScoring()
+  	{
+  		 ArrayList<CarcassonneTile> list=new ArrayList<>();
+  		 //    farm farm farm | farm farm farm | farm farm city
+  		  //   farm      road | road      road | road      city
+  		 //    farm road farm | farm city farm | farm road city
+  		 //		 farm road farm | farm city farm | 
+  		 //
+  		 //
   	}
   	
   	private int citiesContains(CarcassonneTile tile)
