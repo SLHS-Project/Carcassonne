@@ -117,7 +117,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         g.drawLine(getWidth()*1610/1920, getHeight()*610/1080, getWidth()-getWidth()*25/1920, getHeight()*610/1080);
         g.drawLine(getWidth()*1610/1920, getHeight()*830/1080, getWidth()-getWidth()*25/1920, getHeight()*830/1080);
         g.drawLine(getWidth()*1610/1920, getHeight()*890/1080, getWidth()-getWidth()*25/1920, getHeight()*890/1080);
-        g.drawLine(getWidth()*1755/1920, getHeight()*890/1080, getWidth()*1755/1920, getHeight()-getHeight()*25/1080);
 
         g.setColor(Color.black);
 
@@ -146,7 +145,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 
         Font f4 = new Font("Times New Roman", 0, getHeight()*30/1080);
         g.setFont(f4);
-        g.drawString("Click To See", getWidth()*1670/1920, getHeight()*960/1080);
+        g.drawString("Press [h] To See", getWidth()*1670/1920, getHeight()*960/1080);
         g.drawString("Instructions", getWidth()*1677/1920, getHeight()*1010/1080);
 
         // Map
@@ -256,6 +255,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 case 'R':
                     this.restartGame();
                     this.parent.change("menu");
+                    break;
+                case 'h':
+                    this.parent.change("instr");
                     break;
             }
         }

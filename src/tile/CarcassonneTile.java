@@ -153,8 +153,7 @@ public class CarcassonneTile {
 	}
 	public boolean hasShield()
 	{
-		ArrayList<Integer> i= new ArrayList<>(Arrays.asList(6, 12, 23, 31, 34, 35, 46, 65, 77, 79));
-		if(i.contains(code))
+	    if(this.shield)
 			return true;
 		return false;
 	}

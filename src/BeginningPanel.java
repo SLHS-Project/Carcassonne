@@ -64,7 +64,7 @@ public class BeginningPanel extends JPanel implements MouseListener, ActionListe
 
 		Font f2 = new Font("Times New Roman", 0, getHeight()*30/1080);
 		g.setFont(f2);
-		g.drawString("Press '?'", getWidth()*90/1920, getHeight()*955/1080);
+		g.drawString("Click here", getWidth()*90/1920, getHeight()*955/1080);
 		g.drawString("For Instructions", getWidth()*70/1920, getHeight()*1010/1080);
 
 	}
