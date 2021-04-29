@@ -1,6 +1,7 @@
 package tile;
 
 import javax.imageio.ImageIO;
+import javax.print.attribute.standard.Sides;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -20,6 +21,7 @@ import java.util.Arrays;
  * 		ex) can this piece placed here? -- Done
  */
 public class CarcassonneTile {
+	int id;
 	boolean monastery;
 	BufferedImage image;
 	Rotation rotation;
@@ -53,6 +55,16 @@ public class CarcassonneTile {
 	}
 
 	public CarcassonneTile(boolean monastery, boolean shield, Side[] sides, BufferedImage img) {
+		this.shield = shield;
+		this.monastery = monastery;
+		this.image = img;
+		this.rotation = Rotation.D0;
+		this.sides = new Side[4];
+		this.sides = sides;
+	}
+
+	public CarcassonneTile(int indx, boolean monastery, boolean shield, Side[] sides, BufferedImage img) {
+		this.id = indx;
 		this.shield = shield;
 		this.monastery = monastery;
 		this.image = img;
@@ -136,7 +148,31 @@ public class CarcassonneTile {
 	public boolean fit(CarcassonneTile t, Orient o) {
 		return this.getRotatedSides()[o.iden()].equals(t.getRotatedSides()[o.opposite().iden()].getReversedSide());
 	}
-	
+
+	public ArrayList<Orient> getRoads() {
+	    Side[] s = this.getRotatedSides();
+	    ArrayList<Orient> ret = new ArrayList<>();
+
+		if(s[0].getSide()[1] == TerrainType.Road) ret.add(Orient.N);
+		if(s[1].getSide()[1] == TerrainType.Road) ret.add(Orient.W);
+		if(s[2].getSide()[1] == TerrainType.Road) ret.add(Orient.S);
+		if(s[3].getSide()[1] == TerrainType.Road) ret.add(Orient.E);
+
+		return ret;
+	}
+
+	public ArrayList<Orient> getCities() {
+		Side[] s = this.getRotatedSides();
+		ArrayList<Orient> ret = new ArrayList<>();
+
+		if(s[0].getSide()[1] == TerrainType.City) ret.add(Orient.N);
+		if(s[1].getSide()[1] == TerrainType.City) ret.add(Orient.W);
+		if(s[2].getSide()[1] == TerrainType.City) ret.add(Orient.S);
+		if(s[3].getSide()[1] == TerrainType.City) ret.add(Orient.E);
+
+		return ret;
+	}
+
 	public boolean isCR()
 	{
 		ArrayList<Integer> a=new ArrayList<>(Arrays.asList(13, 16, 33, 43, 45, 57, 69, 72));
@@ -303,6 +339,7 @@ public class CarcassonneTile {
 	}
 
 	public String toString() {
+		/*
 		Side[] rotated = this.getRotatedSides();
 		return String.format(
 				"      %s    %s    %s      \n" +
@@ -315,6 +352,9 @@ public class CarcassonneTile {
 				rotated[1].getSide()[1], rotated[3].getSide()[1],
 				rotated[1].getSide()[0], rotated[3].getSide()[2],
 				rotated[2].getSide()[0], rotated[2].getSide()[1], rotated[2].getSide()[2]);
+		 */
+
+        return "" + this.id;
 	}
 
 	public static void main(String[] args) {
