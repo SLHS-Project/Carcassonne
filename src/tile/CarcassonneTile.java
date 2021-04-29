@@ -264,7 +264,7 @@ public class CarcassonneTile {
 		String ret = "";
 		String keys = "NWSE";
 		for(int i = 0; i < 4; i++)
-			if(this.sides[i].getSide()[1] == TerrainType.Farm) {
+			if(this.sides[i].getSide()[0] == TerrainType.Farm) {
 				if(rotation.degree()==0)
 					ret += keys.charAt(i) + " ";
 				else if(rotation.degree()==270) {
