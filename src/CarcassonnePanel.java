@@ -215,14 +215,14 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 b.translate(getWidth() * 20 / 1920, getHeight() * 20 / 1080);
                 if (b.contains(x, y)) {
                     if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley, tIndex)) {
-                        System.out.println("added at " + b.tilex + " " + b.tiley);
+                        //System.out.println("added at " + b.tilex + " " + b.tiley);
                         fetchNewTile();
                         this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/[N]one)? ";
                         this.addMeepleState = true;
                     } else {
                         // TODO Message this
                         this.statusMessage = "Cannot be added, conflict at " + map.getConflicts(this.curr_tile, b.tilex, b.tiley);
-                        System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
+                        //System.out.println("Cannot be added : " + map.getConflicts(this.curr_tile, b.tilex, b.tiley));
                     }
                 }
             }
@@ -233,7 +233,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
 
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
+        //System.out.println(e.getKeyChar());
+
+        this.addMeepleState = false; ////// DEBUG
         if(this.addMeepleState) {
             // Meeple adding here
             switch (e.getKeyChar()) {
@@ -258,6 +260,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                     break;
                 case 'h':
                     this.parent.change("instr");
+                    break;
+                case 'l':
+                    this.map.score.score();
                     break;
             }
         }
