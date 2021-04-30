@@ -64,6 +64,10 @@ public class CarcassonneMap {
 		this.score = new CarcassonneScore(this);
     }
 
+	public CarcassonneTile getRelativeTile(Orient o, int x, int y) {
+		int[] vec = o.getVector();
+		return this.map[x + vec[0]][y + vec[1]];
+	}
 
     // Scoring
     public ArrayList<Orient> getConflicts(CarcassonneTile t, int x, int y) {

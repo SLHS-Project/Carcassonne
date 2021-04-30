@@ -21,13 +21,9 @@ public class CarcassonneScore {
         ArrayList<RoadWeb> inclwebs = new ArrayList<>();
         for(Orient o: roads) {
             CarcassonneTile rt = this.getRelativeTile(o, x, y);
-            for(RoadWeb rw : roadwebs) {
-                if(rw.contains(rt)) {
+            for(RoadWeb rw : roadwebs)
+                if(rw.contains(rt))
                     inclwebs.add(rw);
-                    //rw.add(this.map.map[x][y]);
-                    //added = true;
-                }
-            }
         }
 
         if (inclwebs.isEmpty())
@@ -35,7 +31,7 @@ public class CarcassonneScore {
         else if(inclwebs.size() == 1) {
             inclwebs.get(0).add(this.map.map[x][y]);
         } else {
-            RoadWeb merged = new RoadWeb(inclwebs.get(0).iden);
+            RoadWeb merged = new RoadWeb(inclwebs.get(0).iden, map);
             for(RoadWeb rw: inclwebs) {
                 merged.set.addAll(rw.set);
                 Iterator itr = roadwebs.iterator();
@@ -52,6 +48,7 @@ public class CarcassonneScore {
         return true;
     }
 
+
     public int score() {
         CarcassonneMap.Boundary b = map.getBoundary();
 
@@ -64,15 +61,14 @@ public class CarcassonneScore {
                 ArrayList<Orient> cities = curr.getCities();
                 ArrayList<Orient> roads = curr.getRoads();
 
-                if(!roads.isEmpty()) {
+                if(!roads.isEmpty())
                     if(!this.appendToWeb(x, y, roads, roadwebs))
-                        roadwebs.add(new RoadWeb(this.map.map[x][y]));
-                }
+                        roadwebs.add(new RoadWeb(this.map.map[x][y], this.map));
             }
         }
 
         for(RoadWeb rb: roadwebs) {
-            System.out.println(rb.set);
+            System.out.println(rb + " " + rb.isComplete(rb));
         }
         System.out.println();
         return 0;
@@ -81,10 +77,12 @@ public class CarcassonneScore {
 
 class RoadWeb {
     CarcassonneTile iden;
+    CarcassonneMap map;
     HashSet<CarcassonneTile> set;
 
-    public RoadWeb(CarcassonneTile iden) {
+    public RoadWeb(CarcassonneTile iden, CarcassonneMap map) {
         this.set = new HashSet<CarcassonneTile>();
+        this.map = map;
         this.iden = iden;
         this.add(iden);
     }
@@ -95,5 +93,29 @@ class RoadWeb {
 
     public boolean contains(CarcassonneTile iden) {
         return this.set.contains(iden);
+    }
+
+    public boolean isComplete(RoadWeb rw) {
+        CarcassonneMap.Boundary b = map.getBoundary();
+
+        for(int x = b.x(); x < b.x2(); x++) {
+            for (int y = b.y(); y < b.y2(); y++) {
+                CarcassonneTile curr = map.map[x][y];
+                if(!rw.set.contains(curr)) continue; // only check what's in the web
+
+                ArrayList<Orient> roads = curr.getRoads();
+                if(roads.isEmpty()) continue; // only check if it's a road tile
+
+                for(Orient o: roads) {
+                    if(map.getRelativeTile(o, x, y) == null) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.set.toString();
     }
 }
