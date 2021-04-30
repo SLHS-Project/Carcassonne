@@ -2,6 +2,7 @@ import tile.CarcassonneTile;
 import tile.Orient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -68,7 +69,7 @@ public class CarcassonneScore {
         }
 
         for(RoadWeb rb: roadwebs) {
-            System.out.println(rb + " " + rb.isComplete(rb));
+            System.out.println(rb + " " + rb.isComplete());
         }
         System.out.println();
         return 0;
@@ -95,13 +96,13 @@ class RoadWeb {
         return this.set.contains(iden);
     }
 
-    public boolean isComplete(RoadWeb rw) {
+    public boolean isComplete() {
         CarcassonneMap.Boundary b = map.getBoundary();
 
         for(int x = b.x(); x < b.x2(); x++) {
             for (int y = b.y(); y < b.y2(); y++) {
                 CarcassonneTile curr = map.map[x][y];
-                if(!rw.set.contains(curr)) continue; // only check what's in the web
+                if(!this.set.contains(curr)) continue; // only check what's in the web
 
                 ArrayList<Orient> roads = curr.getRoads();
                 if(roads.isEmpty()) continue; // only check if it's a road tile
@@ -114,8 +115,60 @@ class RoadWeb {
         return true;
     }
 
+    public ArrayList<RoadWeb> subroads() {
+        // get sub road, a complete road that is ended with center roads.
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return this.set.toString();
+    }
+}
+
+class CityChunk {
+    CarcassonneTile iden;
+    CarcassonneMap map;
+    HashSet<CarcassonneTile> set;
+
+    public CityChunk(CarcassonneTile iden, CarcassonneMap map) {
+        this.set = new HashSet<>();
+        this.iden = iden;
+        this.map = map;
+
+        this.set.add(iden);
+    }
+
+    public void add(CarcassonneTile t)  {
+        this.set.add(t);
+    }
+
+    public int totalShields() {
+        int s = 0;
+        for(CarcassonneTile t: this.set)
+            if(t.hasShield())
+                s++;
+        return s;
+    }
+
+    public boolean isComplete() {
+        CarcassonneMap.Boundary b = map.getBoundary();
+
+        for(int x = b.x(); x < b.x2(); x++) {
+            for (int y = b.y(); y < b.y2(); y++) {
+                CarcassonneTile curr = map.map[x][y];
+                if(!this.set.contains(curr)) continue; // only check what's in the web
+
+                ArrayList<Orient> cities = curr.getCities();
+                if (cities.isEmpty()) continue;
+
+                for(Orient o: cities) {
+                    if (this.map.getRelativeTile(o, x, y) == null)
+                        return false;
+                }
+            }
+        }
+        return true;
     }
 }
