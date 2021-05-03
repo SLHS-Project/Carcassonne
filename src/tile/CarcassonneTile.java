@@ -21,7 +21,7 @@ import java.util.Arrays;
  * 		ex) can this piece placed here? -- Done
  */
 public class CarcassonneTile {
-	int id;
+	public int id;
 	boolean monastery;
 	BufferedImage image;
 	Rotation rotation;

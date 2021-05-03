@@ -18,7 +18,7 @@ public class CarcassonneScore {
         return map.map[x + vec[0]][y + vec[1]];
     }
 
-    public boolean appendToWeb(int x, int y, ArrayList<Orient> roads, ArrayList<RoadWeb> roadwebs) {
+    public boolean appendRoadToWeb(int x, int y, ArrayList<Orient> roads, ArrayList<RoadWeb> roadwebs) {
         ArrayList<RoadWeb> inclwebs = new ArrayList<>();
         for(Orient o: roads) {
             CarcassonneTile rt = this.getRelativeTile(o, x, y);
@@ -49,11 +49,62 @@ public class CarcassonneScore {
         return true;
     }
 
+    public boolean appendCityToChunck(int x, int y, ArrayList<Orient> cities, ArrayList<CityChunk> chuncks) {
+        ArrayList<CityChunk> inccity = new ArrayList<>();
+        for(Orient o: cities) {
+            CarcassonneTile rt = this.getRelativeTile(o, x, y);
+            for(CityChunk cc: chuncks)
+                if (cc.contains(rt))
+                    inccity.add(cc);
+        }
+
+        CarcassonneTile ctile = this.map.map[x][y];
+        if(ctile.id == 19 ||
+            ctile.id == 20||
+            ctile.id == 24||
+            ctile.id == 51||
+            ctile.id == 54||
+            ctile.id == 59){
+            for(Orient o: cities) {
+                CarcassonneTile rt = this.getRelativeTile(o, x, y);
+                for(CityChunk cc: chuncks)
+                    if (cc.contains(rt))
+                        inccity.add(cc);
+            }
+            for(CityChunk ic: inccity) {
+                ic.add(ctile);
+            }
+            return true;
+        }
+
+        if(inccity.isEmpty())
+            return false;
+        else if(inccity.size() == 1)
+            inccity.get(0).add(this.map.map[x][y]);
+        else {
+            CityChunk merged = new CityChunk(inccity.get(0).iden, map);
+            for(CityChunk cc: inccity) {
+                merged.set.addAll(cc.set);
+                Iterator itr = chuncks.iterator();
+                while (itr.hasNext()) {
+                    CityChunk elem = (CityChunk) itr.next();
+                    if(elem.iden == cc.iden)
+                        itr.remove();
+                }
+            }
+            merged.add(this.map.map[x][y]);
+            chuncks.add(merged);
+        }
+        return true;
+    }
 
     public int score() {
         CarcassonneMap.Boundary b = map.getBoundary();
 
         ArrayList<RoadWeb> roadwebs = new ArrayList<RoadWeb>();
+        ArrayList<CityChunk> citychunks = new ArrayList<CityChunk>();
+
+        ArrayList<CarcassonneMap.Coordinate> later = new ArrayList<>();
 
         for(int x = b.x(); x < b.x2(); x++) {
             for(int y = b.y(); y < b.y2(); y++) {
@@ -63,13 +114,36 @@ public class CarcassonneScore {
                 ArrayList<Orient> roads = curr.getRoads();
 
                 if(!roads.isEmpty())
-                    if(!this.appendToWeb(x, y, roads, roadwebs))
+                    if(!this.appendRoadToWeb(x, y, roads, roadwebs))
                         roadwebs.add(new RoadWeb(this.map.map[x][y], this.map));
+
+                if(curr.id == 19 ||
+                        curr.id == 20||
+                        curr.id == 24||
+                        curr.id == 51||
+                        curr.id == 54||
+                        curr.id == 59) {
+                    later.add(new CarcassonneMap.Coordinate(x, y));
+                    continue;
+                }
+                if(!cities.isEmpty())
+                    if(!this.appendCityToChunck(x, y, cities, citychunks))
+                        citychunks.add(new CityChunk(this.map.map[x][y], this.map));
             }
         }
 
+        for(CarcassonneMap.Coordinate lc: later) {
+            ArrayList<Orient> cities = this.map.map[lc.x][lc.y].getCities();
+            this.appendCityToChunck(lc.x, lc.y, cities, citychunks);
+        }
+
+        System.out.println("roads: ");
         for(RoadWeb rb: roadwebs) {
             System.out.println(rb + " " + rb.isComplete());
+        }
+        System.out.println("cities");
+        for(CityChunk cc: citychunks) {
+            System.out.println(cc + " " + cc.isComplete());
         }
         System.out.println();
         return 0;
@@ -143,6 +217,15 @@ class CityChunk {
     public void add(CarcassonneTile t)  {
         this.set.add(t);
     }
+    public boolean contains(CarcassonneTile t) {
+        return this.set.contains(t);
+    }
+    public boolean containsID(int tid) {
+        for(CarcassonneTile t: set)
+            if(t.id == tid)
+                return true;
+        return false;
+    }
 
     public int totalShields() {
         int s = 0;
@@ -170,5 +253,9 @@ class CityChunk {
             }
         }
         return true;
+    }
+
+    public String toString() {
+        return this.set.toString();
     }
 }
