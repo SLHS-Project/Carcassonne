@@ -70,4 +70,7 @@ public class CarcassonnePlayer {
         return score;
     }
 
+    public String toString() {
+        return this.getName();
+    }
 }
