@@ -31,4 +31,14 @@ public enum Orient {
             default: return "no";
         }
     }
+    public int[] getVector() {
+        switch (this.id) {
+            //                        x  y
+            case 0: return new int[] {0, -1};
+            case 1: return new int[] {-1, 0};
+            case 2: return new int[] {0, 1};
+            case 3: return new int[] {1, 0};
+            default: return new int[] {0, 0};
+        }
+    }
 };

@@ -109,7 +109,7 @@ public class TileParser {
             e.printStackTrace();
         }
 
-        return new CarcassonneTile(mono, shield, this.makeSides(orients), timg);
+        return new CarcassonneTile(indx, mono, shield, this.makeSides(orients), timg);
     }
     public HashMap<Integer, CarcassonneTile> loadTiles(String file) {
         HashMap<Integer, CarcassonneTile> ret = new HashMap<Integer, CarcassonneTile>();

@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 public class CarcassonneMap {
     public Resources resources;
-  	private CarcassonneTile[][] map;
+  	protected CarcassonneTile[][] map;
   //	private TreeMap<CarcassonneTile, Point> Map;
   	private ArrayList<ArrayList<CarcassonneTile>> cities;
   	private ArrayList<Boolean> citiesVal;
@@ -37,8 +37,9 @@ public class CarcassonneMap {
   	private final int WIDTH=1600;
   	private final int HEIGHT=760;
 
-    public CarcassonneMap(CarcassonnePlayer r, CarcassonnePlayer y, CarcassonnePlayer b, CarcassonnePlayer g)
-  	{
+  	public CarcassonneScore score;
+
+    public CarcassonneMap(CarcassonnePlayer r, CarcassonnePlayer y, CarcassonnePlayer b, CarcassonnePlayer g) {
   		red=r;
   		yellow=y;
   		blue=b;
@@ -57,8 +58,14 @@ public class CarcassonneMap {
 		// 0, 0 is left, top
 		this.map = new CarcassonneTile[161][161];
 		this.tryAddAt(resources.getTiles().get(37), 81, 81, 37);
+
+		this.score = new CarcassonneScore(this);
     }
 
+	public CarcassonneTile getRelativeTile(Orient o, int x, int y) {
+		int[] vec = o.getVector();
+		return this.map[x + vec[0]][y + vec[1]];
+	}
 
     // Scoring
     public ArrayList<Orient> getConflicts(CarcassonneTile t, int x, int y) {
@@ -82,16 +89,18 @@ public class CarcassonneMap {
 
     public boolean tryAddAt(CarcassonneTile t, int x, int y, int index) {
     	t.setCode(index);
-    	System.out.println("placed tile is "+t.getCode());
+    	//System.out.println("placed tile is "+t.getCode());
         if(!this.canAddAt(t, x, y)) return false;
         this.map[x][y] = t;
+        /*
         complete(t, x, y);
         addToFarmland(t, x, y);
         
         System.out.println("farmlands: "+print(farmlands));
         System.out.println("cities: "+print(cities));
         System.out.println("roads: "+print(roads)+"\n");
-        
+
+         */
         return true;
     }
     
@@ -107,7 +116,7 @@ public class CarcassonneMap {
     	return str;
     }
 
-    class Coordinate {
+    static class Coordinate {
         int x, y;
         public Coordinate(int x, int y) {
             this.x = x;
@@ -287,8 +296,7 @@ public class CarcassonneMap {
 	}
 
     public GameBoardGraphics render(int w, int h) {
-    	// TODO fix this
-    	System.out.println(h+ " " + w);
+    	//System.out.println(h+ " " + w);
 		int tile_size = 75;
 		Boundary bb = this.getBoundary();
 		int width = bb.x2 - bb.x1 + 1;

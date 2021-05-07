@@ -2,16 +2,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.event.*;
-import java.awt.geom.*;
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.Timer.*;
-import java.awt.geom.Ellipse2D;
-import java.util.concurrent.Executor;
 import java.util.*;
-import java.util.Queue;
 
 public class InstructionsPanel extends JPanel implements MouseListener, ActionListener, KeyListener{
 
