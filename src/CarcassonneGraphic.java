@@ -1,3 +1,5 @@
+import player.CarcassonnePlayer;
+
 import java.io.IOException;
 import java.awt.*;
 import javax.swing.*;

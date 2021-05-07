@@ -5,6 +5,8 @@
  * -Serves as identification for Game class
  */
 
+package player;
+
 import tile.Meeple;
 
 import java.awt.image.*;
@@ -20,12 +22,13 @@ public class CarcassonnePlayer {
 
         meeples = new Meeple[7]; //7 meeples, and 1 other for scoring placement
         for (int i = 0; i < meeples.length; i++)
-            meeples[i] = new Meeple(name);
+            meeples[i] = new Meeple(this);
     }
 
     public void addScore(int num) {
         score += num;
     }
+    public void setScore(int s) {this.score = s;}
 
     public Meeple[] getMeeples() {
         return meeples;

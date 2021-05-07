@@ -1,3 +1,4 @@
+import player.CarcassonnePlayer;
 import tile.CarcassonneTile;
 import tile.Orient;
 
@@ -140,10 +141,24 @@ public class CarcassonneScore {
         System.out.println("roads: ");
         for(RoadWeb rb: roadwebs) {
             System.out.println(rb + " " + rb.isComplete());
+            if(rb.isComplete()) {
+                HashSet<CarcassonnePlayer> owners = rb.owner();
+                for(CarcassonnePlayer p: owners) {
+                    System.out.println(p);
+                    p.addScore(rb.set.size());
+                }
+            }
         }
         System.out.println("cities");
         for(CityChunk cc: citychunks) {
             System.out.println(cc + " " + cc.isComplete());
+            if(cc.isComplete()) {
+                HashSet<CarcassonnePlayer> owners = cc.owner();
+                for(CarcassonnePlayer p: owners) {
+                    System.out.println(p);
+                    p.addScore(cc.set.size());
+                }
+            }
         }
         System.out.println();
         return 0;
@@ -160,6 +175,16 @@ class RoadWeb {
         this.map = map;
         this.iden = iden;
         this.add(iden);
+    }
+
+    public HashSet<CarcassonnePlayer> owner() {
+        HashSet<CarcassonnePlayer> ret = new HashSet<>();
+        for(CarcassonneTile t: this.set) {
+            if(t.getMeeple() != null)
+                ret.add(t.getMeeple().getOwner());
+        }
+
+        return ret;
     }
 
     public void add(CarcassonneTile iden)  {
@@ -212,6 +237,16 @@ class CityChunk {
         this.map = map;
 
         this.set.add(iden);
+    }
+
+    public HashSet<CarcassonnePlayer> owner() {
+        HashSet<CarcassonnePlayer> ret = new HashSet<>();
+        for(CarcassonneTile t: this.set) {
+            if(t.getMeeple() != null)
+                ret.add(t.getMeeple().getOwner());
+        }
+
+        return ret;
     }
 
     public void add(CarcassonneTile t)  {

@@ -13,6 +13,7 @@
     Rotation is handled at Tile itself.
  */
 
+import player.CarcassonnePlayer;
 import tile.*;
 
 import javax.imageio.ImageIO;
@@ -101,7 +102,6 @@ public class CarcassonneMap {
         System.out.println("farmlands: "+print(farmlands));
         System.out.println("cities: "+print(cities));
         System.out.println("roads: "+print(roads)+"\n");
-
          */
         return true;
     }
@@ -772,7 +772,7 @@ public class CarcassonneMap {
   				String name="";
   				Meeple mp=MTile.getMeeple();
   				if(mp!=null)
-  					name=mp.getColor();
+  					name=mp.getOwner().toString();
   				callPlayer(name).addScore(9);
   		}
   	}
@@ -822,7 +822,7 @@ public class CarcassonneMap {
   										totalTiles++;
   									}
   								}
-  								callPlayer(mp.getColor()).addScore(totalTiles);
+  								mp.getOwner().addScore(totalTiles);
   							}
   		  		
   						}
@@ -915,7 +915,7 @@ public class CarcassonneMap {
   			if(meeple!=null) {
   				if (meeple.getType().equalsIgnoreCase(type))
   				{
-  					String owner=meeple.getColor();
+  					String owner=meeple.getOwner().toString();
   					//add the owner of meeple to the treemap, but check if it exist first
   					if(players.containsKey(owner))
   						players.replace(owner, players.get(owner)+1);

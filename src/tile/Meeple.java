@@ -1,24 +1,26 @@
 package tile;
+import player.CarcassonnePlayer;
+
 import java.awt.image.BufferedImage;
 
 public class Meeple {
 
-	private String color;
+    private CarcassonnePlayer owner;
 	private String type;
 	private BufferedImage meeple;
 	private boolean placed;
 	
-	public Meeple(String player)
+	public Meeple(CarcassonnePlayer owner)
 	{
-		color=player;
+		this.owner =owner;
 		placed=false;
 		
 		//SET MEEPLE IMAGE
 	}
 	
-	public String getColor()
+	public CarcassonnePlayer getOwner()
 	{
-		return color;
+		return owner;
 	}
 	
 	public String getType()

@@ -1,4 +1,6 @@
+import player.CarcassonnePlayer;
 import tile.CarcassonneTile;
+import tile.Meeple;
 import tile.Rotation;
 
 import java.awt.image.BufferedImage;
@@ -93,6 +95,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         initializeDeck();
     }
 
+    void doScoring() {
+        CarcassonnePlayer[] players = {this.r, this.y, this.g, this.b};
+        for(CarcassonnePlayer p: players) p.setScore(0);
+        this.map.score.score();
+    }
+
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(brown);
@@ -154,12 +162,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         // Map
         this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
         g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
-
-        // borderlines
-        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-            //b.translate(getWidth()*20/1920, getHeight()*20/1080);
-            //g.drawRect(b.x(), b.y(), b.width(), b.height());
-        }
 
         // Status message
         Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
@@ -256,20 +258,27 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     }
 
     public void keyPressed(KeyEvent e) {
-        //System.out.println(e.getKeyChar());
-
         //this.addMeepleState = false; ////// DEBUG
         if(this.addMeepleState) {
             // Meeple adding here
             switch (e.getKeyChar()) {
-                case 'R': case 'r': this.statusMessage = "Meeple added to the road"; break;
-                case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";break;
-                case 'C': case 'c': this.statusMessage = "Meeple added to the city";break;
-                case 'N': case 'n': this.statusMessage = "skipped meeple";break;
+                case 'R': case 'r': this.statusMessage = "Meeple added to the road";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'C': case 'c': this.statusMessage = "Meeple added to the city";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'N': case 'n': this.statusMessage = "skipped meeple";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
                 default: this.repaint();return;
             }
             this.addMeepleState = false;
             fetchNewTile();
+            this.doScoring();
         } else {
             switch (e.getKeyChar()) {
                 case 'r':

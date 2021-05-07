@@ -78,6 +78,10 @@ public class CarcassonneTile {
 		code=c;
 	}
 
+	public void setMeeple(Meeple m) {
+		this.meeple = m;
+	}
+
 	public BufferedImage getImage() {
 		BufferedImage tileimg = this.rotateImageByDegrees(this.image, this.rotation.degree());
 		BufferedImage r = new BufferedImage(75, 75, BufferedImage.TYPE_INT_ARGB);
