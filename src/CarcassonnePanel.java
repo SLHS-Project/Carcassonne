@@ -168,7 +168,21 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
             //b.translate(getWidth()*20/1920, getHeight()*20/1080);
             //g.drawRect(b.x(), b.y(), b.width(), b.height());
         }
+        
+        if(currPlayer.getName().equals("red"))
+        	g.setColor(Color.RED);
+        else if(currPlayer.getName().equals("yellow"))
+        	g.setColor(Color.YELLOW);
+        else if(currPlayer.getName().equals("blue"))
+        	g.setColor(Color.BLUE);
+        else
+        	g.setColor(Color.GREEN);
+        
+        g.drawRect(20, 20, 1574, 1000);
+        g.drawRect(21, 21, 1572, 998);
+        g.drawRect(22, 22, 1570, 996);
 
+        g.setColor(Color.black);
         //assign the player's meeple to a certain type: thief/warrior/farmer/monk
         //change that meeple to placed
         //assign the meeple to the tile
@@ -208,7 +222,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         if(meepleAdded)
         {
         		String str="Click on "+where+" to place meeple";
-        	 g.drawString(str, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
+        	 g.drawString(str, getWidth()*20/1920+10, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 30);
         }
         where="";
 
@@ -216,9 +230,9 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
         g.setFont(f5);
         if(!meepleAdded)
-        	g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
+        	g.drawString(this.statusMessage, getWidth()*20/1920+10, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 30);
 
-        g.drawString("Trun: " + this.getCurrentPlayer().toString(), getWidth()*20/1920, getHeight()*45/1080 );
+        g.drawString("Turn: " + currPlayer.getName(), getWidth()*20/1920+10, getHeight()*45/1080+10 );
 
         // tile preview
         g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
@@ -282,6 +296,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		int x = e.getX();
 		int y = e.getY();
 
+	//	System.out.println(x+" "+y);
         tx = x;
         ty = y;
 
