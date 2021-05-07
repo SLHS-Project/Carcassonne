@@ -1,0 +1,146 @@
+//READ THIS!!
+//The codes below are from different sections of the class
+
+FOR THE CarcassonnePanel CLASS:
+        //I added a new variable
+        private CarcassonneTile nowTile;
+  
+        //CHANGES FOR PART OF THE PAINT METHOD: 
+       if(where.length()>2 && !where.equals("meeple"))
+       {
+            Meeple meeple=currPlayer.getMeeple();
+        		if(meeple==null)
+        			statusMessage="You don't have any meeples";
+        		else {
+        			meeple.place();
+        			if(where.equals("road") && nowTile.checkRdDirections()>0) //ADDED NEW CONDITIONALS
+        				meeple.setType("thief");
+        			else if(where.equals("city") && nowTile.hasCity()) 
+        				meeple.setType("warrior");
+        			else if(where.equals("monastery") && nowTile.isMonastery()) 
+        				meeple.setType("monk");
+        			else if(where.equals("farmland")) 
+        				meeple.setType("farmer");
+        			
+        			nowTile.setMeeple(meeple);
+        			System.out.println(nowTile.getMeeple().getType());
+        			meepleAdded=true;
+        		}
+        		
+        }
+        
+        if(meepleAdded)
+        {
+        		String str="Click on "+where+" to place meeple";
+        	 g.drawString(str, getWidth()*20/1920+10, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 30);
+        }
+        where="";
+        //DELETED OTHER STUFF
+        
+        
+       //FOR THE KEYPRESSED METHOD:
+       nowTile=curr_tile;  //add this within the if(this.addMeepleState) and outside of switch and before fetchNewTiles()
+       
+       
+
+
+//FOR THE CarcassonneMap ClASS:
+
+      //uncomment the line below in tryAddAt(    ) method
+      complete(t, x, y);
+        
+        
+      //completeC method change:
+    private boolean completeC (CarcassonneTile tile, int x, int y)
+  	{
+  		if(!tile.hasCity())
+  			return false;
+  		
+  		String temp=tile.getCityDirections();
+  		
+  		//consists of the direction of the road: "N W"
+  		String[] c=temp.split(" ");
+  		ArrayList<CarcassonneTile> cityTiles=new ArrayList<>();
+  		for(int i=0; i<c.length; i++)
+  		{
+  				String direction=c[i];
+  				System.out.println("city direction "+direction);
+  				CarcassonneTile tempTile;
+  				//Point pt=Map.get(tile);
+  				if(direction.equals("N"))
+  					tempTile=map[x][y-1];
+  					//pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					tempTile=map[x][y+1];
+  					//pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					tempTile=map[x-1][y];
+  					//pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else //if(direction.equals("E"))
+  					tempTile=map[x+1][y];
+  					//pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				//CarcassonneTile tempTile=findTile(pt);
+  				if(tempTile==null)
+  					continue;
+  				else {
+  					System.out.println("tempTile next to city is "+tempTile.getCode());
+  					if(i==0)
+  						cityTiles=contains(tempTile, "C");
+  					else
+  					{
+  						ArrayList<CarcassonneTile> newCityTiles=contains(tempTile, "C");
+  						//if the two arraylist doesn't equal
+  						if(!cityTiles.equals(newCityTiles)) {
+  							cityTiles.addAll(newCityTiles);
+  							cityTiles.add(tile);
+  							citiesVal.remove(cities.indexOf(newCityTiles));
+  							cities.remove(newCityTiles);
+  						}
+  					}
+  				}
+  				
+  		//change the value of the key in "cities" to true once completed
+  		//check if this tile connects two different portion of cities, merge the arraylist in "cities" if so
+  		}
+  		
+  		//if this city is a new city
+  		if(cityTiles==null || cityTiles.size()==0)
+  		{
+  				ArrayList<CarcassonneTile> tempList=new ArrayList<>();
+  				tempList.add(tile);
+  				cities.add(tempList);
+  				citiesVal.add(false);
+  				return false;
+  		}
+  		cityTiles.add(tile);
+  		cityTiles=contains(tile, "C");
+  		for(CarcassonneTile t: cityTiles)
+  		{
+    		temp=t.getCityDirections();
+    		c=temp.split(" ");
+    		for(String direction: c)
+    		{
+    			//Point pt=Map.get(tile);
+    			CarcassonneTile tempTile;
+  				if(direction.equals("N"))
+  					tempTile=map[x][y-1];
+  					//pt.setLocation(pt.getX(), pt.getY()-tileSize);
+  				else if(direction.equals("S"))
+  					tempTile=map[x][y+1];
+  					//pt.setLocation(pt.getX(), pt.getY()+tileSize);
+  				else if(direction.equals("W"))
+  					tempTile=map[x-1][y];
+  					//pt.setLocation(pt.getX()-tileSize, pt.getY());
+  				else //if(direction.equals("E"))
+  					tempTile=map[x+1][y];
+  					//pt.setLocation(pt.getX()+tileSize, pt.getY());
+  				
+  				//CarcassonneTile tempTile=findTile(pt);
+  				if (!tempTile.hasCity())
+  					return false;
+    		}
+  		}
+  		citiesVal.set(cities.indexOf(cityTiles), true);
+  		return true;
+  	}
