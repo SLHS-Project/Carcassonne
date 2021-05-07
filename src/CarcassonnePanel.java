@@ -1,6 +1,6 @@
 import tile.CarcassonneTile;
 import tile.Rotation;
-
+import tile.Meeple;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -35,6 +35,11 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     private CarcassonneMap map;
     private int tIndex=37;
     int tx, ty;
+    private String where="";
+    private BufferedImage redM, yellowM, blueM, greenM;
+    private CarcassonnePlayer currPlayer;
+    private boolean meepleAdded;
+
 
 
     public CarcassonnePanel(CarcassonneGraphic parent) throws IOException {
@@ -53,6 +58,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         catch(Exception E) {
             E.printStackTrace();
         }
+        currPlayer=r;
+
     }
 
     private void initializeGame() {
@@ -65,6 +72,7 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         map = new CarcassonneMap(r, y, b, g);
         statusMessage = "";
         addMeepleState = false;
+        meepleAdded=false;
     }
 
     private void initializeDeck() {
@@ -161,6 +169,49 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
             //g.drawRect(b.x(), b.y(), b.width(), b.height());
         }
 
+        //assign the player's meeple to a certain type: thief/warrior/farmer/monk
+        //change that meeple to placed
+        //assign the meeple to the tile
+        if(where.length()>2 && !where.equals("meeple"))
+        {
+        		Meeple meeple=currPlayer.getMeeple();
+        		if(meeple==null)
+        			statusMessage="You don't have any meeples";
+        		else {
+        			meeple.place();
+        			if(where.equals("road")) 
+        				meeple.setType("thief");
+        			else if(where.equals("city")) 
+        				meeple.setType("warrior");
+        			else if(where.equals("monastery")) 
+        				meeple.setType("monk");
+        			else if(where.equals("farmland")) 
+        				meeple.setType("farmer");
+        			
+        			curr_tile.setMeeple(meeple);
+        			meepleAdded=true;
+        		}
+        		
+        }
+        if(where.equals("meeple"))
+        {
+        	if(currPlayer.getName().equals("red"))
+          	currPlayer=y;
+          else if(currPlayer.getName().equals("yellow"))
+          	currPlayer=b;
+          else if(currPlayer.getName().equals("blue"))
+          	currPlayer=this.g;
+          else
+          	currPlayer=r;
+        }
+        
+        if(meepleAdded)
+        {
+        		String str="Click on "+where+" to place meeple";
+        	 g.drawString(str, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
+        }
+        where="";
+
         // Status message
         Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
         g.setFont(f5);
@@ -234,13 +285,13 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         ty = y;
 
         // check for adding tile
-        if(!this.addMeepleState) {
+        if(!this.addMeepleState && !meepleAdded) {
             for (CarcassonneMap.Boundary b : gbg.getBoundaries()) {
                 b.translate(getWidth() * 20 / 1920, getHeight() * 20 / 1080);
                 if (b.contains(x, y)) {
                     if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley, tIndex)) {
                         //System.out.println("added at " + b.tilex + " " + b.tiley);
-                        this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/[N]one)? ";
+                        this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/{M]onastery/[N]one)? ";
                         this.addMeepleState = true;
                     } else {
                         // TODO Message this
@@ -250,6 +301,22 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 }
             }
         }
+        
+      //add meeple to a tile, draw out meeple
+        if(meepleAdded)
+        {
+        		meepleAdded=false;
+        		
+        		if(currPlayer.getName().equals("red"))
+            	currPlayer=this.y;
+            else if(currPlayer.getName().equals("yellow"))
+            	currPlayer=b;
+            else if(currPlayer.getName().equals("blue"))
+            	currPlayer=g;
+            else
+            	currPlayer=r;
+        }
+
 
         // do instruction etc here.
         this.repaint();
@@ -265,9 +332,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 case 'R': case 'r': this.statusMessage = "Meeple added to the road"; break;
                 case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";break;
                 case 'C': case 'c': this.statusMessage = "Meeple added to the city";break;
+                case 'M': case 'm': this.statusMessage = "Meeple added to the monastery";break;
                 case 'N': case 'n': this.statusMessage = "skipped meeple";break;
                 default: this.repaint();return;
             }
+            String[] temp=statusMessage.split(" ");
+            where=temp[temp.length-1];
             this.addMeepleState = false;
             fetchNewTile();
         } else {
