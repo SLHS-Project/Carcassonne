@@ -33,6 +33,16 @@ public class CarcassonnePlayer {
     public Meeple[] getMeeples() {
         return meeples;
     }
+    
+    public Meeple getMeeple()
+    {
+    	for(Meeple meeple: meeples)
+    	{
+    		if(meeple.available())
+    			return meeple;
+    	}
+    	return null;
+    }
 
     public void receiveMp() {
         for (Meeple mp : meeples) {
