@@ -215,7 +215,8 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         // Status message
         Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
         g.setFont(f5);
-        g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
+        if(!meepleAdded)
+        	g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
 
         g.drawString("Trun: " + this.getCurrentPlayer().toString(), getWidth()*20/1920, getHeight()*45/1080 );
 
