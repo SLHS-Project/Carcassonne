@@ -336,10 +336,6 @@ public class CarcassonneTile {
 	{
 		return meeple;
 	}
-	public void setMeeple(Meeple mp)
-	{
-		meeple=mp;
-	}
 	
 	public int getCode()
 	{

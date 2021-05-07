@@ -1,6 +1,8 @@
+import player.CarcassonnePlayer;
 import tile.CarcassonneTile;
-import tile.Rotation;
 import tile.Meeple;
+import tile.Rotation;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -35,11 +37,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     private CarcassonneMap map;
     private int tIndex=37;
     int tx, ty;
-    private String where="";
-    private BufferedImage redM, yellowM, blueM, greenM;
-    private CarcassonnePlayer currPlayer;
-    private boolean meepleAdded;
-
 
 
     public CarcassonnePanel(CarcassonneGraphic parent) throws IOException {
@@ -58,8 +55,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         catch(Exception E) {
             E.printStackTrace();
         }
-        currPlayer=r;
-
     }
 
     private void initializeGame() {
@@ -72,7 +67,6 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         map = new CarcassonneMap(r, y, b, g);
         statusMessage = "";
         addMeepleState = false;
-        meepleAdded=false;
     }
 
     private void initializeDeck() {
@@ -99,6 +93,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
     private void restartGame() {
         initializeGame();
         initializeDeck();
+    }
+
+    void doScoring() {
+        CarcassonnePlayer[] players = {this.r, this.y, this.g, this.b};
+        for(CarcassonnePlayer p: players) p.setScore(0);
+        this.map.score.score();
     }
 
     public void paint(Graphics g) {
@@ -163,76 +163,12 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
         this.gbg = map.render(getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080);
         g.drawImage(gbg.getImg(), getWidth()*20/1920, getHeight()*20/1080, getWidth()*1610/1920 - getWidth()*20/1920, getHeight() - 2 * getHeight()*20/1080, yellow, null);
 
-        // borderlines
-        for(CarcassonneMap.Boundary b: gbg.getBoundaries()) {
-            //b.translate(getWidth()*20/1920, getHeight()*20/1080);
-            //g.drawRect(b.x(), b.y(), b.width(), b.height());
-        }
-        
-        if(currPlayer.getName().equals("red"))
-        	g.setColor(Color.RED);
-        else if(currPlayer.getName().equals("yellow"))
-        	g.setColor(Color.YELLOW);
-        else if(currPlayer.getName().equals("blue"))
-        	g.setColor(Color.BLUE);
-        else
-        	g.setColor(Color.GREEN);
-        
-        g.drawRect(20, 20, 1574, 1000);
-        g.drawRect(21, 21, 1572, 998);
-        g.drawRect(22, 22, 1570, 996);
-
-        g.setColor(Color.black);
-        //assign the player's meeple to a certain type: thief/warrior/farmer/monk
-        //change that meeple to placed
-        //assign the meeple to the tile
-        if(where.length()>2 && !where.equals("meeple"))
-        {
-        		Meeple meeple=currPlayer.getMeeple();
-        		if(meeple==null)
-        			statusMessage="You don't have any meeples";
-        		else {
-        			meeple.place();
-        			if(where.equals("road")) 
-        				meeple.setType("thief");
-        			else if(where.equals("city")) 
-        				meeple.setType("warrior");
-        			else if(where.equals("monastery")) 
-        				meeple.setType("monk");
-        			else if(where.equals("farmland")) 
-        				meeple.setType("farmer");
-        			
-        			curr_tile.setMeeple(meeple);
-        			meepleAdded=true;
-        		}
-        		
-        }
-        if(where.equals("meeple"))
-        {
-        	if(currPlayer.getName().equals("red"))
-          	currPlayer=y;
-          else if(currPlayer.getName().equals("yellow"))
-          	currPlayer=b;
-          else if(currPlayer.getName().equals("blue"))
-          	currPlayer=this.g;
-          else
-          	currPlayer=r;
-        }
-        
-        if(meepleAdded)
-        {
-        		String str="Click on "+where+" to place meeple";
-        	 g.drawString(str, getWidth()*20/1920+10, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 30);
-        }
-        where="";
-
         // Status message
         Font f5 = new Font("Times New Roman", 0, getHeight()*30/1080);
         g.setFont(f5);
-        if(!meepleAdded)
-        	g.drawString(this.statusMessage, getWidth()*20/1920+10, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 30);
+        g.drawString(this.statusMessage, getWidth()*20/1920, getHeight()*20/1080 + getHeight() - 2 * getHeight()*20/1080 - 10);
 
-        g.drawString("Turn: " + currPlayer.getName(), getWidth()*20/1920+10, getHeight()*45/1080+10 );
+        g.drawString("Trun: " + this.getCurrentPlayer().toString(), getWidth()*20/1920, getHeight()*45/1080 );
 
         // tile preview
         g.drawImage(this.curr_tile.getImage(), getWidth()*1630/1920, getHeight()*660/1080, null);
@@ -296,18 +232,17 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
 		int x = e.getX();
 		int y = e.getY();
 
-	//	System.out.println(x+" "+y);
         tx = x;
         ty = y;
 
         // check for adding tile
-        if(!this.addMeepleState && !meepleAdded) {
+        if(!this.addMeepleState) {
             for (CarcassonneMap.Boundary b : gbg.getBoundaries()) {
                 b.translate(getWidth() * 20 / 1920, getHeight() * 20 / 1080);
                 if (b.contains(x, y)) {
                     if (map.tryAddAt(this.curr_tile, b.tilex, b.tiley, tIndex)) {
                         //System.out.println("added at " + b.tilex + " " + b.tiley);
-                        this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/{M]onastery/[N]one)? ";
+                        this.statusMessage = "Add meeple at ([R]oad/[F]armland/[C]ity/[N]one)? ";
                         this.addMeepleState = true;
                     } else {
                         // TODO Message this
@@ -317,45 +252,33 @@ public class CarcassonnePanel extends JPanel implements MouseListener, ActionLis
                 }
             }
         }
-        
-      //add meeple to a tile, draw out meeple
-        if(meepleAdded)
-        {
-        		meepleAdded=false;
-        		
-        		if(currPlayer.getName().equals("red"))
-            	currPlayer=this.y;
-            else if(currPlayer.getName().equals("yellow"))
-            	currPlayer=b;
-            else if(currPlayer.getName().equals("blue"))
-            	currPlayer=g;
-            else
-            	currPlayer=r;
-        }
-
 
         // do instruction etc here.
         this.repaint();
     }
 
     public void keyPressed(KeyEvent e) {
-        //System.out.println(e.getKeyChar());
-
         //this.addMeepleState = false; ////// DEBUG
         if(this.addMeepleState) {
             // Meeple adding here
             switch (e.getKeyChar()) {
-                case 'R': case 'r': this.statusMessage = "Meeple added to the road"; break;
-                case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";break;
-                case 'C': case 'c': this.statusMessage = "Meeple added to the city";break;
-                case 'M': case 'm': this.statusMessage = "Meeple added to the monastery";break;
-                case 'N': case 'n': this.statusMessage = "skipped meeple";break;
+                case 'R': case 'r': this.statusMessage = "Meeple added to the road";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'F': case 'f': this.statusMessage = "Meeple added to the farmland";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'C': case 'c': this.statusMessage = "Meeple added to the city";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
+                case 'N': case 'n': this.statusMessage = "skipped meeple";
+                    this.curr_tile.setMeeple(new Meeple(this.getCurrentPlayer()));
+                    break;
                 default: this.repaint();return;
             }
-            String[] temp=statusMessage.split(" ");
-            where=temp[temp.length-1];
             this.addMeepleState = false;
             fetchNewTile();
+            this.doScoring();
         } else {
             switch (e.getKeyChar()) {
                 case 'r':

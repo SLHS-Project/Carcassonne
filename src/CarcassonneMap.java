@@ -37,6 +37,7 @@ public class CarcassonneMap {
   	private CarcassonnePlayer red, yellow, blue, green;
   	private final int WIDTH=1600;
   	private final int HEIGHT=760;
+  	private int tileSize;
 
   	public CarcassonneScore score;
 
@@ -53,6 +54,7 @@ public class CarcassonneMap {
   		citiesVal=new ArrayList<>();
   		roadsVal=new ArrayList<>();
   		
+  		tileSize=HEIGHT/4;
 
   		this.resources = new Resources("src/res/tileImg/tile_data.txt");
 
